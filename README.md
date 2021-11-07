@@ -1,2 +1,2 @@
 # rust_studies
-外部クレートのテスト(動作検証)コード
+My test codes of external crates to understand the behaviors and semantics.
