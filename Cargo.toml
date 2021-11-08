@@ -5,4 +5,13 @@ name = "rust_studies"
 version = "0.1.0"
 
 [dependencies]
-itertools = "0.10.1"
+arraydeque = "*"
+bounded-vec-deque = "*"
+circular-queue = "*"
+criterion = "*"
+itertools = "*"
+rb = "*"
+
+[[bench]]
+harness = false
+name = "ring_buffers"
