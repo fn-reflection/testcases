@@ -10,6 +10,7 @@ bounded-vec-deque = "*"
 circular-queue = "*"
 criterion = "*"
 itertools = "*"
+maplit = "*"
 rb = "*"
 
 [[bench]]
