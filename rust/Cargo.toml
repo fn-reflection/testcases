@@ -6,13 +6,24 @@ version = "0.1.0"
 
 [dependencies]
 arraydeque = "*"
+bondi = "*"
 bounded-vec-deque = "*"
+bus = "*"
 circular-queue = "*"
-criterion = "*"
+criterion = {version = "*", features = ["html_reports"]}
+eventador = {version = "*", features = ["async"]}
+futures = "^0.3.19"
 itertools = "*"
 maplit = "*"
+multiqueue2 = "*"
 rb = "*"
+tokio = {version = "*", features = ["full"]}
+tokio-stream = "*"
 
 [[bench]]
 harness = false
 name = "ring_buffers"
+
+[[bench]]
+harness = false
+name = "message_buses"
