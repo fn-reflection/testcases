@@ -17,6 +17,7 @@ itertools = "*"
 maplit = "*"
 multiqueue2 = "*"
 rb = "*"
+rpassword = "*"
 tokio = {version = "*", features = ["full"]}
 tokio-stream = "*"
 
@@ -27,3 +28,7 @@ name = "ring_buffers"
 [[bench]]
 harness = false
 name = "message_buses"
+
+[[bin]]
+name = "rpassword"
+path = "src/rpassword.rs"
