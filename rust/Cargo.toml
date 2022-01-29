@@ -10,6 +10,7 @@ async-shutdown = "*"
 bondi = "*"
 bounded-vec-deque = "*"
 bus = "*"
+chrono = "*"
 circular-queue = "*"
 criterion = {version = "*", features = ["html_reports"]}
 eventador = {version = "*", features = ["async"]}
@@ -30,6 +31,10 @@ name = "ring_buffers"
 [[bench]]
 harness = false
 name = "message_buses"
+
+[[bench]]
+harness = false
+name = "fan_in"
 
 [[bin]]
 name = "rpassword"
