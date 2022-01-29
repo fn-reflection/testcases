@@ -4,7 +4,7 @@ use rb::RbProducer as _;
 use rb::RB as _;
 
 fn circular_queue(c: &mut criterion::Criterion) {
-    c.bench_function("circular_queue::CircularQueue", |b| {
+    c.bench_function("ring_buffers::circular_queue::CircularQueue", |b| {
         b.iter(|| {
             let mut q1 = circular_queue::CircularQueue::with_capacity(3);
             for i in 1..=10 {
@@ -16,7 +16,7 @@ fn circular_queue(c: &mut criterion::Criterion) {
 }
 
 fn spscrb(c: &mut criterion::Criterion) {
-    c.bench_function("rb::SpscRb", |b| {
+    c.bench_function("ring_buffers::rb::SpscRb", |b| {
         b.iter(|| {
             let rb = rb::SpscRb::new(3);
             let (tx, rx) = (rb.producer(), rb.consumer());
@@ -29,7 +29,7 @@ fn spscrb(c: &mut criterion::Criterion) {
 }
 
 fn arraydeque(c: &mut criterion::Criterion) {
-    c.bench_function("arraydeque::ArrayDeque", |b| {
+    c.bench_function("ring_buffers::arraydeque::ArrayDeque", |b| {
         b.iter(|| {
             let mut q1: arraydeque::ArrayDeque<[_; 3]> = arraydeque::ArrayDeque::new();
             for i in 1..=10 {
@@ -41,7 +41,7 @@ fn arraydeque(c: &mut criterion::Criterion) {
 }
 
 fn bounded_vec_deque(c: &mut criterion::Criterion) {
-    c.bench_function("bounded_vec_deque::BoundedVecDeque", |b| {
+    c.bench_function("ring_buffers::bounded_vec_deque::BoundedVecDeque", |b| {
         b.iter(|| {
             let mut q1 = bounded_vec_deque::BoundedVecDeque::new(3);
             for i in 1..=10 {

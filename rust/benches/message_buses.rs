@@ -2,7 +2,7 @@ use futures::stream::StreamExt as _;
 const ITERATIONS: i32 = 1000000;
 
 fn std_channel(c: &mut criterion::Criterion) {
-    c.bench_function("std::sync::mpsc::channel", |b| {
+    c.bench_function("message_buses::std::sync::mpsc::channel", |b| {
         b.iter(|| {
             let (tx, rx) = std::sync::mpsc::channel();
             let t = std::thread::spawn(move || {
@@ -19,7 +19,7 @@ fn std_channel(c: &mut criterion::Criterion) {
 }
 
 fn bus_bus(c: &mut criterion::Criterion) {
-    c.bench_function("bus::Bus", |b| {
+    c.bench_function("message_buses::bus::Bus", |b| {
         b.iter(|| {
             let mut bus = bus::Bus::new(1024);
             let mut rx1 = bus.add_rx();
@@ -45,7 +45,7 @@ fn create_tokio_rt() -> tokio::runtime::Runtime {
 }
 
 fn futures_channel(c: &mut criterion::Criterion) {
-    c.bench_function("futures::sync::mpsc::unbounded", |b| {
+    c.bench_function("message_buses::futures::sync::mpsc::unbounded", |b| {
         b.iter(|| {
             create_tokio_rt().spawn(async {
                 let (tx, rx) = futures::channel::mpsc::unbounded();
@@ -65,7 +65,7 @@ fn futures_channel(c: &mut criterion::Criterion) {
 }
 
 fn tokio_channel(c: &mut criterion::Criterion) {
-    c.bench_function("tokio::sync::mpsc::unbounded_channel", |b| {
+    c.bench_function("message_buses::tokio::sync::mpsc::unbounded_channel", |b| {
         b.iter(|| {
             create_tokio_rt().block_on(async {
                 let (tx, mut rx) = tokio::sync::mpsc::channel(1024);
@@ -87,7 +87,7 @@ fn tokio_channel(c: &mut criterion::Criterion) {
 }
 
 fn bondi(c: &mut criterion::Criterion) {
-    c.bench_function("bondi::Bondi", |b| {
+    c.bench_function("message_buses::bondi::Bondi", |b| {
         b.iter(|| {
             let bondi = bondi::Bondi::new(100);
             let tx = bondi.get_tx().unwrap();
@@ -106,7 +106,7 @@ fn bondi(c: &mut criterion::Criterion) {
 }
 
 fn eventador(c: &mut criterion::Criterion) {
-    c.bench_function("eventador::Eventador", |b| {
+    c.bench_function("message_buses::eventador::Eventador", |b| {
         b.iter(|| {
             let eventbus = eventador::Eventador::new(1024).unwrap();
             let subscriber = eventbus.subscribe::<Option<i32>>();
