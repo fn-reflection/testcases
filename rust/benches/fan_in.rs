@@ -123,7 +123,7 @@ fn tokio_channel(c: &mut criterion::Criterion) {
                 };
                 let fut_send2 = async move {
                     for i in 1..=ITERATIONS {
-                        let m = Measurement::new(i as f64, 1);
+                        let m = Measurement::new(i as f64, 2);
                         tx2.send(m).unwrap();
                     }
                 };
