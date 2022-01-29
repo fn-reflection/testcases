@@ -1,7 +1,6 @@
 version: "3"
 services:
   rust-runtime:
-    build: ./docker
+    build: 
+      dockerfile: docker/Dockerfile
     container_name: rust_runtime
-    volumes:
-      - .:/workdir
