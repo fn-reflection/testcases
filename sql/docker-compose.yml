@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  testcases_mysql:
+    container_name: testcases_mysql
+    build: 
+      dockerfile: ./docker/mysql/Dockerfile
+      args:
+        - MYSQL_VERSION=8.0.28
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+    volumes:
+      - /etc/mysql
+      - /var/lib/mysql
+      - /var/run/mysqld
+      
