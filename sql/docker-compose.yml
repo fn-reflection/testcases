@@ -5,13 +5,14 @@ services:
     build: 
       dockerfile: ./docker/mysql/Dockerfile
       args:
-        - MYSQL_VERSION=8.0.28
+        - MYSQL_VERSION=5.7.37
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: user
       MYSQL_PASSWORD: pass
+    ports:
+      - "53306:3306"
     volumes:
-      - /etc/mysql
-      - /var/lib/mysql
-      - /var/run/mysqld
-      
+      - testcases_mysql:/var/lib/mysql
+volumes:
+  testcases_mysql:
