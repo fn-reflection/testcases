@@ -105,24 +105,6 @@ fn bondi(c: &mut criterion::Criterion) {
     });
 }
 
-fn eventador(c: &mut criterion::Criterion) {
-    c.bench_function("message_buses::eventador::Eventador", |b| {
-        b.iter(|| {
-            let eventbus = eventador::Eventador::new(1024).unwrap();
-            let subscriber = eventbus.subscribe::<Option<i32>>();
-            let t = std::thread::spawn(move || {
-                (1..=ITERATIONS).for_each(|n| eventbus.publish(Some(n)));
-                eventbus.publish::<Option<i32>>(None);
-            });
-            let mut _cnt = 0;
-            while let Some(_msg) = *(subscriber.recv()) {
-                _cnt += 1;
-            }
-            t.join().unwrap();
-        })
-    });
-}
-
 criterion::criterion_group!(
     benches,
     std_channel,
@@ -130,6 +112,5 @@ criterion::criterion_group!(
     futures_channel,
     tokio_channel,
     bondi,
-    eventador,
 );
 criterion::criterion_main!(benches);
