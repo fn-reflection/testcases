@@ -5,6 +5,7 @@ name = "rust_studies"
 version = "0.1.0"
 
 [dependencies]
+aes-gcm = "*"
 arraydeque = "*"
 async-shutdown = "*"
 bondi = "*"
@@ -15,11 +16,14 @@ circular-queue = "*"
 criterion = {version = "*", features = ["html_reports"]}
 futures = "^0.3.19"
 itertools = "*"
+keepass = "*"
 maplit = "*"
 multiqueue2 = "*"
 nix = "*"
 rb = "*"
 rpassword = "*"
+serde = {version = "*", features = ["derive"]}
+serde_json = "*"
 tokio = {version = "*", features = ["full"]}
 tokio-stream = "*"
 
