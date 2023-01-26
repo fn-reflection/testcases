@@ -14,6 +14,7 @@ enum CredentialValue {
 }
 
 impl Credential {
+    #[allow(dead_code)]
     fn keys() -> HashSet<String> {
         serde_json::to_value(Credential::default())
             .unwrap()
@@ -23,6 +24,8 @@ impl Credential {
             .map(|x| x.to_owned())
             .collect::<HashSet<_>>()
     }
+
+    #[allow(dead_code)]
     pub fn from_keepass_db(db: keepass::Database) -> Self {
         let keys = Self::keys();
         let mut map = HashMap::new();
@@ -31,9 +34,9 @@ impl Credential {
                 keepass::NodeRef::Entry(e) => {
                     let title = e.get_title().unwrap();
                     if keys.contains(title) {
-                        let user_name = e.get_username().unwrap().to_string();
-                        let password = e.get_password().unwrap().to_string();
-                        let pat = if password != "" {
+                        let user_name = e.get_username().unwrap();
+                        let password = e.get_password();
+                        let pat = if let Some(password) = password {
                             serde_json::json!([user_name, password])
                         } else {
                             serde_json::json!(user_name)
