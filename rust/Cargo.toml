@@ -5,27 +5,27 @@ name = "rust_studies"
 version = "0.1.0"
 
 [dependencies]
-aes-gcm = "*"
-arraydeque = "*"
-async-shutdown = "*"
-bondi = "*"
-bounded-vec-deque = "*"
-bus = "*"
-chrono = "*"
-circular-queue = "*"
-criterion = {version = "*", features = ["html_reports"]}
-futures = "^0.3.19"
-itertools = "*"
-keepass = "*"
-maplit = "*"
-multiqueue2 = "*"
-nix = "*"
-rb = "*"
-rpassword = "*"
-serde = {version = "*", features = ["derive"]}
-serde_json = "*"
-tokio = {version = "*", features = ["full"]}
-tokio-stream = "*"
+aes-gcm = "0.9.4"
+arraydeque = "0.4.5"
+async-shutdown = "0.1.2"
+bondi = "0.1.2"
+bounded-vec-deque = "0.1.1"
+bus = "2.3.0"
+chrono = "0.4.23"
+circular-queue = "0.2.6"
+criterion = {version = "0.4.0", features = ["html_reports"]}
+futures = "0.3.25"
+itertools = "0.10.5"
+keepass = "0.5.0"
+maplit = "1.0.2"
+multiqueue2 = "0.1.7"
+nix = "0.26.2"
+rb = "0.4.1"
+rpassword = "5.0.1"
+serde = {version = "1.0.152", features = ["derive"]}
+serde_json = "1.0.91"
+tokio = {version = "1.24.2", features = ["full"]}
+tokio-stream = "0.1.11"
 
 [[bench]]
 harness = false
