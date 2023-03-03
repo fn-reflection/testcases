@@ -20,6 +20,7 @@ keepass = "0.5.0"
 maplit = "1.0.2"
 multiqueue2 = "0.1.7"
 nix = "0.26.2"
+notify = { version = "5.1.0", features = ["serde"] }
 rb = "0.4.1"
 rpassword = "7.2.0"
 serde = { version = "1.0.152", features = ["derive"] }
@@ -40,9 +41,13 @@ harness = false
 name = "fan_in"
 
 [[bin]]
-name = "rpassword"
-path = "src/rpassword.rs"
-
-[[bin]]
 name = "async_shutdown"
 path = "src/async_shutdown.rs"
+
+[[bin]]
+name = "notify"
+path = "src/notify.rs"
+
+[[bin]]
+name = "rpassword"
+path = "src/rpassword.rs"
