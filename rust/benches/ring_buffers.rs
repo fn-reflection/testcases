@@ -31,7 +31,7 @@ fn spscrb(c: &mut criterion::Criterion) {
 fn arraydeque(c: &mut criterion::Criterion) {
     c.bench_function("ring_buffers::arraydeque::ArrayDeque", |b| {
         b.iter(|| {
-            let mut q1: arraydeque::ArrayDeque<[_; 3]> = arraydeque::ArrayDeque::new();
+            let mut q1: arraydeque::ArrayDeque<_, 3> = arraydeque::ArrayDeque::new();
             for i in 1..=10 {
                 let _ = q1.push_back(black_box(i));
             }
@@ -52,5 +52,11 @@ fn bounded_vec_deque(c: &mut criterion::Criterion) {
     });
 }
 
-criterion::criterion_group!(benches, circular_queue, spscrb, arraydeque, bounded_vec_deque);
+criterion::criterion_group!(
+    benches,
+    circular_queue,
+    spscrb,
+    arraydeque,
+    bounded_vec_deque
+);
 criterion::criterion_main!(benches);

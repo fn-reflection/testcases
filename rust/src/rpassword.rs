@@ -1,4 +1,4 @@
 fn main() {
-    let actual = rpassword::read_password_from_tty(Some("your password: ")).unwrap();
+    let actual = rpassword::prompt_password("your password: ").unwrap();
     assert_eq!(actual, "abc");
 }

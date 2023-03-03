@@ -55,7 +55,7 @@ impl Credential {
 #[cfg(test)]
 mod tests {
     use super::Credential;
-    use aes_gcm::aead::{Aead, NewAead};
+    use aes_gcm::{aead::Aead, KeyInit};
 
     #[test]
     fn from_keepass_db_ok() {
@@ -80,16 +80,12 @@ mod tests {
         .unwrap();
         let c = Credential::from_keepass_db(db);
         let json = serde_json::to_string(&c).unwrap();
-        let cipher1 = aes_gcm::Aes256Gcm::new(aes_gcm::Key::from_slice(include_bytes!(
-            "../../test_files/keepass/crypt_password"
-        )));
+        let crypt_password = include_bytes!("../../test_files/keepass/crypt_password");
+        let encrypter = aes_gcm::Aes256Gcm::new_from_slice(crypt_password).unwrap();
         let nonce = aes_gcm::Nonce::from_slice(b"unique nonce");
-        let encrypted = cipher1.encrypt(nonce, json.as_bytes()).unwrap();
-
-        let cipher2 = aes_gcm::Aes256Gcm::new(aes_gcm::Key::from_slice(include_bytes!(
-            "../../test_files/keepass/crypt_password"
-        )));
-        let decrypted = cipher2.decrypt(nonce, encrypted.as_ref()).unwrap();
+        let encrypted = encrypter.encrypt(nonce, json.as_bytes()).unwrap();
+        let decrypter = aes_gcm::Aes256Gcm::new_from_slice(crypt_password).unwrap();
+        let decrypted = decrypter.decrypt(nonce, encrypted.as_ref()).unwrap();
         let c = serde_json::from_str::<Credential>(&String::from_utf8(decrypted).unwrap()).unwrap();
         assert_eq!(c.url, "example.com");
         assert_eq!(c.secret, ("user".to_string(), "password".to_string()));
