@@ -1,24 +1,22 @@
-# README
+# Rails Basics
+## 前提
+このリポジトリの/mysqlで`docker compose up -d`を実行しコンテナを立ち上げていること
+- `mysql_default`と言うdocker networkがある
+- コンテナが正常稼働している
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## docker containerの操作
+```sh
+UID="$(id -u)" GID="$(id -g)" docker compose up -d # 現在のユーザ権限を維持しながらdockerコンテナ起動
+docker exec -it rails_basics /bin/bash # dockerにbashでアクセス
+```
 
-Things you may want to cover:
+## docker container内での操作
+```sh
+cd myapp # rails appのディレクトリに移動
+bundle exec rails s -b 0.0.0.0 # developmentモードでサーバ起動(全てのIPからの接続を待ち受ける)
+EDITOR="nano" bundle exec rails credentials:edit # productionモードで必要となるcredentialファイル(暗号化情報)をでっち上げる
+RAILS_ENV=production bundle exec rails s -b 0.0.0.0 # productionモードでサーバ起動(全てのIPからの接続を待ち受ける)
 
-* Ruby version
+```
 
-* System dependencies
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
