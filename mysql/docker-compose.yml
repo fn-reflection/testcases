@@ -5,7 +5,7 @@ services:
     build: 
       dockerfile: ./docker/mysql/Dockerfile
       args:
-        - MYSQL_VERSION=5.7.37
+        - MYSQL_VERSION=8.0.32
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: user
