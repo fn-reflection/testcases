@@ -1,14 +1,9 @@
 /.bundle
 /db/*.sqlite3
 /db/*.sqlite3-*
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+/log
+/tmp
 
-/tmp/pids/*
-!/tmp/pids/
-!/tmp/pids/.keep
 
 /public/assets
 
