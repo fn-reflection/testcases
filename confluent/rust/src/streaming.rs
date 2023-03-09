@@ -13,11 +13,11 @@ use std::time::Duration;
 
 fn create_stream_consumer(brokers: &str) -> StreamConsumer {
     ClientConfig::new()
-        .set("group.id", "example_consumer_group_id")
         .set("bootstrap.servers", brokers)
+        .set("group.id", "example_consumer_group_id")
         .set("enable.partition.eof", "false")
-        .set("session.timeout.ms", "6000")
         .set("enable.auto.commit", "false")
+        .set("session.timeout.ms", "6000")
         .create::<StreamConsumer>()
         .unwrap()
 }
