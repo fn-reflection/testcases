@@ -68,7 +68,7 @@ async fn run() {
     let stream_processor = consumer.stream().try_for_each(|borrowed_message| {
         let producer = producer.clone();
         async move {
-            tokio::spawn(streaming(producer.clone(), borrowed_message.detach()));
+            tokio::spawn(streaming(producer, borrowed_message.detach()));
             Ok(())
         }
     });
