@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package test_proto.v1;
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+message Obj {
+  int64 int = 1;
+  optional int64 opt_int = 2;
+}
+
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_NOT_ACTIVE = 1;
+  STATUS_ACTIVE = 2;
+  STATUS_REMOVED = 3;
+}
+
+message TestProto {
+  int64 int = 1;
+  optional int64 int_opt = 2;
+  repeated int64 ints = 3;
+  double fl = 4;
+  optional double fl_opt = 5;
+  repeated double fls = 6;
+  bool flag = 7;
+  optional bool flag_opt = 8;
+  repeated bool flags = 9;
+  string str = 10;
+  optional string str_opt = 11;
+  repeated string strs = 12;
+  bytes buf = 13;
+  optional bytes buf_opt = 14;
+  repeated bytes bufs = 15;
+  Status status = 16;
+  optional Status status_opt = 17;
+  repeated Status statuses = 18;
+  map<int64, string> map = 19;
+  // optional map<int64, string> map_opt = 20; // not allowed (and meaningless)
+  // repeated map<int64, string> mapes = 21; // not allowed (and meaningless)
+  Obj obj = 22;
+  optional Obj obj_opt = 23;
+  repeated Obj objs = 24;
+  google.protobuf.Timestamp time = 25;
+  optional google.protobuf.Timestamp time_opt = 26;
+  repeated google.protobuf.Timestamp times = 27;
+  google.protobuf.Duration dur = 28;
+  optional google.protobuf.Duration dur_opt = 29;
+  repeated google.protobuf.Duration durs = 30;
+}
