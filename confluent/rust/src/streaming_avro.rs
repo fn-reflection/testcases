@@ -1,34 +1,13 @@
-use env_logger::fmt::Formatter;
 use futures::TryStreamExt;
 use log::info;
-use rdkafka::config::ClientConfig;
-use rdkafka::consumer::stream_consumer::StreamConsumer;
 use rdkafka::consumer::Consumer;
 use rdkafka::message::OwnedMessage;
 use rdkafka::producer::{FutureProducer, FutureRecord};
 use rdkafka::Message;
-use std::io::Write as _;
-use std::thread;
+use rust_studies_kafka::{
+    create_future_producer, create_stream_consumer, create_tokio_rt, init_logger,
+};
 use std::time::Duration;
-
-fn create_stream_consumer(brokers: &str) -> StreamConsumer {
-    ClientConfig::new()
-        .set("bootstrap.servers", brokers)
-        .set("group.id", "example_consumer_group_id")
-        .set("enable.partition.eof", "false")
-        .set("enable.auto.commit", "false")
-        .set("session.timeout.ms", "6000")
-        .create::<StreamConsumer>()
-        .unwrap()
-}
-
-fn create_future_producer(brokers: &str) -> FutureProducer {
-    ClientConfig::new()
-        .set("bootstrap.servers", brokers)
-        .set("message.timeout.ms", "5000")
-        .create::<FutureProducer>()
-        .unwrap()
-}
 
 // derives new message from consumed message.
 // be called with spawn_blocking in async context
@@ -77,24 +56,6 @@ async fn run() {
 }
 
 fn main() {
-    env_logger::Builder::new()
-        .format(move |formatter: &mut Formatter, record: &log::Record| {
-            let thread_name = format!("(t: {}) ", thread::current().name().unwrap());
-            write!(
-                formatter,
-                "{}{} - {} - {}\n",
-                thread_name,
-                record.level(),
-                record.target(),
-                record.args()
-            )
-        })
-        .filter(None, log::LevelFilter::Info)
-        .parse_filters("rdkafka=trace")
-        .init();
-    let rt = tokio::runtime::Builder::new_multi_thread()
-        .enable_all()
-        .build()
-        .unwrap();
-    rt.block_on(run());
+    init_logger();
+    create_tokio_rt().block_on(run());
 }
