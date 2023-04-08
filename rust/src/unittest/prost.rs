@@ -1,79 +1,72 @@
-use crate::board::Board as ProtoBoard;
+use crate::protobuf::v1::Migrate as ProtoV1Migrate;
 use chrono::NaiveDateTime;
 use ordered_float::OrderedFloat;
 use std::collections::BTreeMap;
 #[derive(Debug)]
-pub struct Board {
-    pub id: Option<i64>,
-    pub time: chrono::NaiveDateTime,
-    pub asks_d: BTreeMap<OrderedFloat<f64>, f32>,
-    pub bids_d: BTreeMap<OrderedFloat<f64>, f32>,
-    pub q_id: i32,
-    pub spread: Option<f64>,
+pub struct MigrateV1 {
+    pub i: Option<i64>,
+    pub t: chrono::NaiveDateTime,
+    pub bc1: BTreeMap<OrderedFloat<f64>, f32>,
+    pub bc2: BTreeMap<OrderedFloat<f64>, f32>,
+    pub d: Option<f64>,
 }
 
-impl From<ProtoBoard> for Board {
-    fn from(pb: ProtoBoard) -> Self {
-        let time = pb.time.unwrap();
-        let time = NaiveDateTime::from_timestamp_opt(time.seconds, time.nanos as u32).unwrap();
+impl From<ProtoV1Migrate> for MigrateV1 {
+    fn from(pb: ProtoV1Migrate) -> Self {
+        let t = pb.t.unwrap();
+        let t = NaiveDateTime::from_timestamp_opt(t.seconds, t.nanos as u32).unwrap();
 
-        let asks_d = pb
-            .asks_d
+        let bc1 = pb
+            .bc1
             .into_iter()
-            .map(|order| (OrderedFloat(order.price), order.volume))
+            .map(|bc| (OrderedFloat(bc.d), bc.f))
             .collect();
 
-        let bids_d = pb
-            .bids_d
+        let bc2 = pb
+            .bc2
             .into_iter()
-            .map(|order| (OrderedFloat(order.price), order.volume))
+            .map(|bc| (OrderedFloat(bc.d), bc.f))
             .collect();
 
-        Board {
-            id: if pb.id == 0 { None } else { Some(pb.id) },
-            time,
-            asks_d,
-            bids_d,
-            q_id: pb.q_id,
-            spread: if pb.spread == 0.0 {
-                None
-            } else {
-                Some(pb.spread)
-            },
+        MigrateV1 {
+            i: if pb.i == 0 { None } else { Some(pb.i) },
+            t,
+            bc1,
+            bc2,
+            d: if pb.d == 0.0 { None } else { Some(pb.d) },
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Board;
-    use crate::board::{Board as ProtoBoard, Order as ProtoOrder};
-    use crate::test_proto::{Obj as ProtoObj, Status as ProtoStatus, TestProto as ProtoTestProto};
+    use super::MigrateV1;
+    use crate::protobuf::v1::{
+        Exhaustive as ProtoExhaustive, Migrate as ProtoV1Migrate,
+        MigrateChild as ProtoV1MigrateChild, Obj as ProtoObj, Status as ProtoStatus,
+    };
+    use crate::protobuf::v2::Migrate as ProtoV2Migrate;
     use prost::Message as _;
 
     #[test]
-    fn from_prost() {
-        let prost_board = ProtoBoard {
-            id: 1,
-            time: Some(prost_types::Timestamp {
+    fn struct_from_protobuf_data_ok() {
+        let prost_v1_migrate = ProtoV1Migrate {
+            i: 1,
+            t: Some(prost_types::Timestamp {
                 seconds: 1,
                 nanos: 1,
             }),
-            asks_d: vec![ProtoOrder {
-                price: 100.0,
-                volume: 1.0,
-            }],
-            bids_d: vec![],
-            q_id: 1,
-            spread: 0.0,
+            bc1: vec![ProtoV1MigrateChild { d: 100.0, f: 1.0 }],
+            bc2: vec![],
+            d: 0.0,
         };
-        let board = Board::from(prost_board);
+        let board = MigrateV1::from(prost_v1_migrate);
         dbg!(board);
     }
 
     #[test]
-    fn test_proto() {
-        let prost_test = ProtoTestProto {
+    fn serde_exhaustive_data_ok() {
+        let prost_test = ProtoExhaustive {
             int: 1,
             int_opt: Some(1),
             ints: vec![1],
@@ -136,7 +129,28 @@ mod tests {
         dbg!(prost_test.encoded_len());
         let encoded = prost_test.encode_to_vec();
         dbg!(prost_test);
-        let decoded = ProtoTestProto::decode(encoded.as_ref()).unwrap();
+        let decoded = ProtoExhaustive::decode(encoded.as_ref()).unwrap();
+        dbg!(decoded);
+    }
+
+    #[test]
+    fn generate_v2_from_v1_ok() {
+        let prost_v1_migrate = ProtoV1Migrate {
+            i: 1,
+            t: Some(prost_types::Timestamp {
+                seconds: 1,
+                nanos: 1,
+            }),
+            bc1: vec![ProtoV1MigrateChild { d: 100.0, f: 1.0 }],
+            bc2: vec![],
+            d: 0.0,
+        };
+        let encoded = prost_v1_migrate.encode_to_vec();
+        dbg!(prost_v1_migrate);
+        let decoded = ProtoV2Migrate::decode(encoded.as_ref()).unwrap();
+        assert_eq!(decoded.bc1[0].d2, 0.0); // default
+        assert_eq!(decoded.bc1[0].dopt, None); // default
+        assert_eq!(decoded.s, "");
         dbg!(decoded);
     }
 }

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package test_proto.v1;
+package protobuf.v1;
 
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
@@ -17,7 +17,7 @@ enum Status {
   STATUS_REMOVED = 3;
 }
 
-message TestProto {
+message Exhaustive {
   int64 int = 1;
   optional int64 int_opt = 2;
   repeated int64 ints = 3;

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package protobuf.v1;
+
+import "google/protobuf/timestamp.proto";
+
+message MigrateChild {
+    double d = 1;
+    float f = 2;
+}
+
+
+message Migrate {
+    int64 i = 1;
+    google.protobuf.Timestamp t = 2;
+    repeated MigrateChild bc1 = 3;
+    repeated MigrateChild bc2 = 4;
+    double d = 5;
+}
