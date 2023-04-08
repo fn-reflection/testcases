@@ -39,9 +39,7 @@ async fn consumer(brokers: &str) {
     consumer
         .stream()
         .try_for_each(|borrow_message| async move {
-            let owned_message = borrow_message.detach();
-            dbg!(owned_message.payload().unwrap());
-            let record = Migrate::decode(owned_message.payload().unwrap()).unwrap();
+            let record = Migrate::decode(borrow_message.payload().unwrap()).unwrap();
             dbg!(record);
             Ok(())
         })
