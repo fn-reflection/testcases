@@ -23,6 +23,7 @@ nix = "0.26.2"
 notify = { version = "5.1.0", features = ["serde"] }
 ordered-float = "3.6.0"
 prost = "0.11.8"
+prost-helper = { version = "0.7.0", features = ["b64"] }
 prost-types = "0.11.8"
 rb = "0.4.1"
 rpassword = "7.2.0"
@@ -30,9 +31,12 @@ serde = { version = "1.0.152", features = ["derive"] }
 serde_json = "1.0.93"
 tokio = { version = "1.26.0", features = ["full"] }
 tokio-stream = "0.1.12"
+validator = "0.16.0"
 
 [build-dependencies]
 prost-build = { version = "0.11.8" }
+prost-build-config = "0.5.0"
+serde_yaml = "0.9.21"
 
 [[bench]]
 harness = false

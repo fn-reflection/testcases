@@ -42,8 +42,8 @@ impl From<ProtoV1Migrate> for MigrateV1 {
 mod tests {
     use super::MigrateV1;
     use crate::protobuf::v1::{
-        Exhaustive as ProtoExhaustive, Migrate as ProtoV1Migrate,
-        MigrateChild as ProtoV1MigrateChild, Obj as ProtoObj, Status as ProtoStatus,
+        Exhaustive as ProtoExhaustive, Hello, Migrate as ProtoV1Migrate,
+        MigrateChild as ProtoV1MigrateChild, Obj as ProtoObj, Status as ProtoStatus, World,
     };
     use crate::protobuf::v2::Migrate as ProtoV2Migrate;
     use prost::Message as _;
@@ -79,9 +79,9 @@ mod tests {
             str: "a".to_string(),
             str_opt: Some("a".to_string()),
             strs: vec!["a".to_string()],
-            buf: vec![1, 2, 3],
-            buf_opt: Some(vec![1, 2, 3]),
-            bufs: vec![vec![1, 2, 3]],
+            buf: vec![1, 2, 3].into(),
+            buf_opt: Some(vec![1, 2, 3].into()),
+            bufs: vec![vec![1, 2, 3].into()],
             status: ProtoStatus::Active as i32,
             status_opt: Some(ProtoStatus::Active as i32),
             statuses: vec![ProtoStatus::Active as i32],
@@ -152,5 +152,23 @@ mod tests {
         assert_eq!(decoded.bc1[0].dopt, None); // default
         assert_eq!(decoded.s, "");
         dbg!(decoded);
+    }
+    use prost::Message as _;
+
+    #[test]
+    fn prost_helper_ok() {
+        let hello = Hello {
+            msg: "abc".to_string(),
+            field_may_be_null: "".to_string(),
+            field_skip_zero: 1,
+            field_skip: "".to_string(),
+            data1: prost::bytes::Bytes::new(),
+            data2: prost::bytes::Bytes::new(),
+            list_data: vec![],
+            world: Some(World { world: 3 }),
+        };
+
+        let x: Vec<u8> = hello.into();
+        dbg!(x);
     }
 }

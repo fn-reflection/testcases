@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package protobuf.v1;
+
+message Hello {
+  string msg = 1;
+  string field_may_be_null = 2;
+  uint64 field_skip_zero = 3;
+  string field_skip = 4;
+  bytes data1 = 5;
+  bytes data2 = 6;
+  repeated bytes list_data = 8;
+  World world = 9;
+}
+
+message World { uint32 world = 1; }
+
+enum HelloStatus {
+  HELLO_STATUS_UNSPECIFIED = 0;
+  HELLO_STATUS_OK = 1;
+  HELLO_STATUS_NOT_FOUND = 2;
+  HELLO_STATUS_INTERNAL_ERROR = 3;
+}
