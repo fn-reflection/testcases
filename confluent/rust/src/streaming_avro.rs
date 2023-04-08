@@ -39,7 +39,7 @@ async fn streaming(producer: FutureProducer, owned_message: OwnedMessage) {
 }
 
 async fn run() {
-    let brokers = "localhost:9092";
+    let brokers = "localhost:39092";
     let consumer = create_stream_consumer(brokers);
     consumer.subscribe(&["input-topic"]).unwrap();
 

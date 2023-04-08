@@ -48,7 +48,7 @@ async fn consumer(brokers: &str) {
 }
 
 async fn run() {
-    let brokers = "localhost:9092";
+    let brokers = "localhost:39092";
     tokio::spawn(producer(brokers));
     consumer(brokers).await;
 }

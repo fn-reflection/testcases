@@ -6,7 +6,7 @@ services:
     image: confluentinc/cp-zookeeper:7.3.2
     network_mode: host
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_CLIENT_PORT: 32181
       ZOOKEEPER_TICK_TIME: 2000
 
   broker:
@@ -17,9 +17,9 @@ services:
     network_mode: host
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'localhost:2181'
+      KAFKA_ZOOKEEPER_CONNECT: 'localhost:32181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:39092
       KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
@@ -29,8 +29,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_JMX_PORT: 9101
       KAFKA_JMX_HOSTNAME: localhost
-      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://localhost:8081
-      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: localhost:29092
+      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://localhost:38081
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: localhost:39092
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
@@ -43,8 +43,8 @@ services:
     network_mode: host
     environment:
       SCHEMA_REGISTRY_HOST_NAME: localhost
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'localhost:29092'
-      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'localhost:39092'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:38081
 
   connect:
     container_name: connect
@@ -54,7 +54,7 @@ services:
       - schema-registry
     network_mode: host
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: 'localhost:29092'
+      CONNECT_BOOTSTRAP_SERVERS: 'localhost:39092'
       CONNECT_REST_ADVERTISED_HOST_NAME: localhost
       CONNECT_GROUP_ID: compose-connect-group
       CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
@@ -66,7 +66,7 @@ services:
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
       CONNECT_VALUE_CONVERTER: io.confluent.connect.avro.AvroConverter
-      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://localhost:8081
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: http://localhost:38081
       # CLASSPATH required due to CC-2422
       CLASSPATH: /usr/share/java/monitoring-interceptors/monitoring-interceptors-7.1.1.jar
       CONNECT_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
@@ -84,16 +84,16 @@ services:
       - ksqldb-server
     network_mode: host
     environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'localhost:29092'
-      CONTROL_CENTER_CONNECT_CONNECT-DEFAULT_CLUSTER: 'localhost:8083'
-      CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://localhost:8088"
-      CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "http://localhost:8088"
-      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://localhost:8081"
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'localhost:39092'
+      CONTROL_CENTER_CONNECT_CONNECT-DEFAULT_CLUSTER: 'localhost:38083'
+      CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://localhost:38088"
+      CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "http://localhost:38088"
+      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://localhost:38081"
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
-      PORT: 9021
+      PORT: 39021
 
   ksqldb-server:
     container_name: ksqldb-server
@@ -104,14 +104,14 @@ services:
     network_mode: host
     environment:
       KSQL_CONFIG_DIR: "/etc/ksql"
-      KSQL_BOOTSTRAP_SERVERS: "localhost:29092"
+      KSQL_BOOTSTRAP_SERVERS: "localhost:39092"
       KSQL_HOST_NAME: ksqldb-server
-      KSQL_LISTENERS: "http://0.0.0.0:8088"
+      KSQL_LISTENERS: "http://0.0.0.0:38088"
       KSQL_CACHE_MAX_BYTES_BUFFERING: 0
-      KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://localhost:8081"
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://localhost:38081"
       KSQL_PRODUCER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor"
       KSQL_CONSUMER_INTERCEPTOR_CLASSES: "io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor"
-      KSQL_KSQL_CONNECT_URL: "http://localhost:8083"
+      KSQL_KSQL_CONNECT_URL: "http://localhost:38083"
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_REPLICATION_FACTOR: 1
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
@@ -125,6 +125,6 @@ services:
     network_mode: host
     environment:
       KAFKA_REST_HOST_NAME: localhost
-      KAFKA_REST_BOOTSTRAP_SERVERS: 'localhost:29092'
-      KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
-      KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://localhost:8081'
+      KAFKA_REST_BOOTSTRAP_SERVERS: 'localhost:39092'
+      KAFKA_REST_LISTENERS: "http://0.0.0.0:38082"
+      KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://localhost:38081'
