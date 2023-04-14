@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package protobuf.v1;
+// https://druid.apache.org/docs/latest/development/extensions-core/protobuf.html#proto-file
+message Metrics {
+  string time = 1;
+  string unit = 2;
+  string http_method = 3;
+  int32 value = 4;
+  string http_code = 5;
+  string page = 6;
+  string metric_type = 7; // camel to snake(follow protobuf standard)
+  string server = 8;
+}
