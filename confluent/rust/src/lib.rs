@@ -6,7 +6,18 @@ use std::io::Write as _;
 use std::thread;
 
 pub mod protobuf {
-    include!(concat!(env!("OUT_DIR"), "/protobuf.v1.rs"));
+    pub mod v1 {
+        include!(concat!(env!("OUT_DIR"), "/protobuf.v1.rs"));
+    }
+
+    pub fn to_proto_qualified_name(typename: &str) -> String {
+        typename.split("::").skip(1).collect::<Vec<_>>().join(".")
+    }
+    #[cfg(test)]
+    mod tests {
+        #[test]
+        fn proto_qualified_name_of_ok() {}
+    }
 }
 
 pub fn create_tokio_rt() -> tokio::runtime::Runtime {
