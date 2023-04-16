@@ -11,7 +11,7 @@ async fn producer(brokers: &str) {
     let producer = create_future_producer(brokers);
     loop {
         let record = Metrics {
-            time: chrono::Utc::now().to_rfc3339(),
+            time: Some(std::time::SystemTime::now().into()),
             unit: "ms".to_string(),
             http_method: "GET".to_string(),
             value: rand::thread_rng().gen_range(1..5),
