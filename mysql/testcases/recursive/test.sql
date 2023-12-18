@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS naive_trees (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
     parent_id BIGINT UNSIGNED,
     content TEXT NOT NULL,
     FOREIGN KEY (parent_id) REFERENCES naive_trees(id)
