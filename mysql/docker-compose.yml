@@ -2,13 +2,22 @@ version: "3.8"
 services:
   testcases_mysql:
     container_name: testcases_mysql
-    build: 
+    build:
       dockerfile: ./docker/mysql/Dockerfile
       args:
-        - MYSQL_VERSION=8.0.32
+        - MYSQL_VERSION=8.0.35
+    volumes:
+      - type: bind
+        source: bind/data
+        target: /var/lib/mysql
+      - type: bind
+        source: bind/log
+        target: /var/log/mysql
+      - type: bind
+        source: bind/conf.d
+        target: /etc/mysql/conf.d
+    user: "${UID}:${GID}"
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: user
-      MYSQL_PASSWORD: pass
     ports:
       - "53306:3306"
