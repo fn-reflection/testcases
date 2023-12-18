@@ -47,7 +47,7 @@ WITH RECURSIVE RecursiveTrees (id, content, parent_id, depth) AS (
     ALL
     SELECT
         t.id,
-        t.content,
+        CONCAT(rt.content, '/', t.content) AS content,
         t.parent_id,
         rt.depth + 1 AS depth
     FROM
