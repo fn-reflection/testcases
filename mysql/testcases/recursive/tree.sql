@@ -1,12 +1,12 @@
-CREATE TABLE IF NOT EXISTS naive_trees (
+CREATE TABLE IF NOT EXISTS tree_nodes (
     id SERIAL PRIMARY KEY,
     parent_id BIGINT UNSIGNED,
     content TEXT NOT NULL,
-    FOREIGN KEY (parent_id) REFERENCES naive_trees(id)
+    FOREIGN KEY (parent_id) REFERENCES tree_nodes(id)
 );
 
 INSERT INTO
-    naive_trees(id, parent_id, content)
+    tree_nodes(id, parent_id, content)
 VALUES
     (1, NULL, '1'),
     (2, 1, '2'),
@@ -30,17 +30,17 @@ SELECT
     t2.id AS to_id,
     t2.content AS to_content
 FROM
-    naive_trees t1
-    LEFT OUTER JOIN naive_trees t2 ON t2.parent_id = t1.id;
+    tree_nodes t1
+    LEFT OUTER JOIN tree_nodes t2 ON t1.id = t2.parent_id;
 
-WITH RECURSIVE RecursiveTrees (id, content, parent_id, depth) AS (
+WITH RECURSIVE recursive_tree (id, content, parent_id, depth) AS (
     SELECT
         id,
         content,
         parent_id,
         0 AS depth
     FROM
-        naive_trees
+        tree_nodes
     WHERE
         parent_id IS NULL -- root node
     UNION
@@ -51,10 +51,10 @@ WITH RECURSIVE RecursiveTrees (id, content, parent_id, depth) AS (
         t.parent_id,
         rt.depth + 1 AS depth
     FROM
-        RecursiveTrees rt
-        INNER JOIN naive_trees t ON rt.id = t.parent_id
+        recursive_tree rt
+        INNER JOIN tree_nodes t ON rt.id = t.parent_id
 )
 SELECT
     *
 FROM
-    RecursiveTrees;
+    recursive_tree;
