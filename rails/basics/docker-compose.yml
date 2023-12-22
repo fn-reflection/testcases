@@ -7,7 +7,7 @@ services:
     networks:
       - mysql_default
     ports:
-      - "53000:3000"
+      - "127.0.0.1:53000:3000"
     volumes:
       - type: bind
         source: ./
