@@ -2,7 +2,7 @@ use futures::stream::StreamExt as _;
 const ITERATIONS: i32 = 10000;
 
 fn std_channel(c: &mut criterion::Criterion) {
-    c.bench_function("message_buses::std::sync::mpsc::channel", |b| {
+    c.bench_function("channels::std::sync::mpsc::channel", |b| {
         b.iter(|| {
             let (tx, rx) = std::sync::mpsc::channel();
             let t = std::thread::spawn(move || {
@@ -18,8 +18,25 @@ fn std_channel(c: &mut criterion::Criterion) {
     });
 }
 
+fn lockfree_spsc(c: &mut criterion::Criterion) {
+    c.bench_function("channels::lockfree::channel::spsc::create", |b| {
+        b.iter(|| {
+            let (mut tx, mut rx) = lockfree::channel::spsc::create();
+            let t = std::thread::spawn(move || {
+                (1..=ITERATIONS).for_each(|n| tx.send(n).unwrap());
+                drop(tx);
+            });
+            let mut _cnt = 0;
+            while let Ok(_msg) = rx.recv() {
+                _cnt += 1;
+            }
+            t.join().unwrap();
+        })
+    });
+}
+
 fn bus_bus(c: &mut criterion::Criterion) {
-    c.bench_function("message_buses::bus::Bus", |b| {
+    c.bench_function("channels::bus::Bus", |b| {
         b.iter(|| {
             let mut bus = bus::Bus::new(1024);
             let mut rx1 = bus.add_rx();
@@ -45,7 +62,7 @@ fn create_tokio_rt() -> tokio::runtime::Runtime {
 }
 
 fn futures_channel(c: &mut criterion::Criterion) {
-    c.bench_function("message_buses::futures::sync::mpsc::unbounded", |b| {
+    c.bench_function("channels::futures::sync::mpsc::unbounded", |b| {
         b.iter(|| {
             create_tokio_rt().spawn(async {
                 let (tx, rx) = futures::channel::mpsc::unbounded();
@@ -65,7 +82,7 @@ fn futures_channel(c: &mut criterion::Criterion) {
 }
 
 fn tokio_channel(c: &mut criterion::Criterion) {
-    c.bench_function("message_buses::tokio::sync::mpsc::unbounded_channel", |b| {
+    c.bench_function("channels::tokio::sync::mpsc::unbounded_channel", |b| {
         b.iter(|| {
             create_tokio_rt().block_on(async {
                 let (tx, mut rx) = tokio::sync::mpsc::channel(1024);
@@ -87,7 +104,7 @@ fn tokio_channel(c: &mut criterion::Criterion) {
 }
 
 fn bondi(c: &mut criterion::Criterion) {
-    c.bench_function("message_buses::bondi::Bondi", |b| {
+    c.bench_function("channels::bondi::Bondi", |b| {
         b.iter(|| {
             let bondi = bondi::Bondi::new(100);
             let tx = bondi.get_tx().unwrap();
@@ -108,6 +125,7 @@ fn bondi(c: &mut criterion::Criterion) {
 criterion::criterion_group!(
     benches,
     std_channel,
+    lockfree_spsc,
     bus_bus,
     futures_channel,
     tokio_channel,

@@ -1,9 +1,9 @@
-use criterion::black_box;
+use criterion::{black_box, Criterion};
 use rb::RbConsumer as _;
 use rb::RbProducer as _;
 use rb::RB as _;
 
-fn circular_queue(c: &mut criterion::Criterion) {
+fn circular_queue(c: &mut Criterion) {
     c.bench_function("ring_buffers::circular_queue::CircularQueue", |b| {
         b.iter(|| {
             let mut q1 = circular_queue::CircularQueue::with_capacity(3);
@@ -15,7 +15,7 @@ fn circular_queue(c: &mut criterion::Criterion) {
     });
 }
 
-fn spscrb(c: &mut criterion::Criterion) {
+fn spscrb(c: &mut Criterion) {
     c.bench_function("ring_buffers::rb::SpscRb", |b| {
         b.iter(|| {
             let rb = rb::SpscRb::new(3);
@@ -28,7 +28,7 @@ fn spscrb(c: &mut criterion::Criterion) {
     });
 }
 
-fn arraydeque(c: &mut criterion::Criterion) {
+fn arraydeque(c: &mut Criterion) {
     c.bench_function("ring_buffers::arraydeque::ArrayDeque", |b| {
         b.iter(|| {
             let mut q1: arraydeque::ArrayDeque<_, 3> = arraydeque::ArrayDeque::new();
@@ -40,7 +40,7 @@ fn arraydeque(c: &mut criterion::Criterion) {
     });
 }
 
-fn bounded_vec_deque(c: &mut criterion::Criterion) {
+fn bounded_vec_deque(c: &mut Criterion) {
     c.bench_function("ring_buffers::bounded_vec_deque::BoundedVecDeque", |b| {
         b.iter(|| {
             let mut q1 = bounded_vec_deque::BoundedVecDeque::new(3);
@@ -52,11 +52,33 @@ fn bounded_vec_deque(c: &mut criterion::Criterion) {
     });
 }
 
-criterion::criterion_group!(
-    benches,
-    circular_queue,
-    spscrb,
-    arraydeque,
-    bounded_vec_deque
-);
-criterion::criterion_main!(benches);
+fn lockfree_spsc(c: &mut Criterion) {
+    c.bench_function("ring_buffers::lockfree::channel::spsc::create", |b| {
+        b.iter(|| {
+            let (mut tx, mut rx) = lockfree::channel::spsc::create();
+            for i in 1..=10 {
+                tx.send(black_box(i)).unwrap();
+            }
+            let mut _i = 0;
+            while let Ok(x) = rx.recv() {
+                _i += x;
+            }
+        })
+    });
+}
+
+fn benches() {
+    let mut criterion = Criterion::default().configure_from_args();
+    circular_queue(&mut criterion);
+    spscrb(&mut criterion);
+    arraydeque(&mut criterion);
+    bounded_vec_deque(&mut criterion);
+    lockfree_spsc(&mut criterion);
+}
+
+fn main() {
+    benches();
+    ::criterion::Criterion::default()
+        .configure_from_args()
+        .final_summary();
+}
