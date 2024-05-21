@@ -48,12 +48,12 @@ name = "fan_in"
 
 [[bin]]
 name = "async_shutdown"
-path = "src/async_shutdown.rs"
+path = "src/entry_points/async_shutdown.rs"
 
 [[bin]]
 name = "notify"
-path = "src/notify.rs"
+path = "src/entry_points/notify.rs"
 
 [[bin]]
 name = "rpassword"
-path = "src/rpassword.rs"
+path = "src/entry_points/rpassword.rs"
