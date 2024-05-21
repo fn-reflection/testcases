@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use std::sync::{atomic::AtomicI64, Arc, Mutex};
 
-const ITERATIONS: i32 = 1000000;
+const ITERATIONS: i32 = 10000;
 #[derive(Copy, Clone, Debug)]
 #[allow(dead_code)]
 struct Measurement {

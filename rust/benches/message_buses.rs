@@ -1,5 +1,5 @@
 use futures::stream::StreamExt as _;
-const ITERATIONS: i32 = 1000000;
+const ITERATIONS: i32 = 10000;
 
 fn std_channel(c: &mut criterion::Criterion) {
     c.bench_function("message_buses::std::sync::mpsc::channel", |b| {
