@@ -1,11 +1,11 @@
 use crate::protobuf::v1::Migrate as ProtoV1Migrate;
-use chrono::NaiveDateTime;
+use chrono::DateTime;
 use ordered_float::OrderedFloat;
 use std::collections::BTreeMap;
 #[derive(Debug)]
 pub struct MigrateV1 {
     pub i: Option<i64>,
-    pub t: chrono::NaiveDateTime,
+    pub t: chrono::DateTime<chrono::Utc>,
     pub bc1: BTreeMap<OrderedFloat<f64>, f32>,
     pub bc2: BTreeMap<OrderedFloat<f64>, f32>,
     pub d: Option<f64>,
@@ -14,7 +14,7 @@ pub struct MigrateV1 {
 impl From<ProtoV1Migrate> for MigrateV1 {
     fn from(pb: ProtoV1Migrate) -> Self {
         let t = pb.t.unwrap();
-        let t = NaiveDateTime::from_timestamp_opt(t.seconds, t.nanos as u32).unwrap();
+        let t = DateTime::from_timestamp(t.seconds, t.nanos as u32).unwrap();
 
         let bc1 = pb
             .bc1

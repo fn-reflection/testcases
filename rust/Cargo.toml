@@ -7,23 +7,23 @@ version = "0.1.0"
 [dependencies]
 aes-gcm = "0.10.1"
 arraydeque = "0.5.1"
-async-shutdown = "0.1.2"
+async-shutdown = "0.2.2"
 bondi = "0.1.2"
 bounded-vec-deque = "0.1.1"
 bus = "2.3.0"
 chrono = "0.4.23"
 circular-queue = "0.2.6"
-criterion = { version = "0.4.0", features = ["html_reports"] }
+criterion = { version = "0.5.1", features = ["html_reports"] }
 futures = "0.3.26"
-itertools = "0.10.5"
-keepass = "0.5.0"
+itertools = "0.13.0"
+keepass = "0.7.12"
 maplit = "1.0.2"
 multiqueue2 = "0.1.7"
-nix = "0.26.2"
-notify = { version = "5.1.0", features = ["serde"] }
-ordered-float = "3.6.0"
-prost = "0.11.8"
-prost-types = "0.11.8"
+nix = "0.28.0"
+notify = { version = "6.1.1", features = ["serde"] }
+ordered-float = "4.2.0"
+prost = "0.12.6"
+prost-types = "0.12.6"
 rb = "0.4.1"
 rpassword = "7.2.0"
 serde = { version = "1.0.152", features = ["derive"] }
@@ -32,7 +32,7 @@ tokio = { version = "1.26.0", features = ["full"] }
 tokio-stream = "0.1.12"
 
 [build-dependencies]
-prost-build = { version = "0.11.8" }
+prost-build = { version = "0.12.6" }
 
 [[bench]]
 harness = false

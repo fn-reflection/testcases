@@ -34,10 +34,10 @@ mod tests {
     }
 
     #[test]
-    fn group_by_ok1() {
+    fn chunk_by_ok1() {
         let actual = vec![1, 4, 2, 3, 5, 6]
             .into_iter()
-            .group_by(|v| *v > 3)
+            .chunk_by(|v| *v > 3)
             .into_iter()
             .map(|(k, g)| (k, g.collect::<Vec<_>>()))
             .collect::<Vec<(_, _)>>();
@@ -53,10 +53,10 @@ mod tests {
     }
 
     #[test]
-    fn group_by_ok2() {
+    fn chunk_by_ok2() {
         let actual = vec![1, 2, 2, 3, 3, 3]
             .into_iter()
-            .group_by(|v| *v)
+            .chunk_by(|v| *v)
             .into_iter()
             .map(|(k, g)| (k, g.collect::<Vec<_>>()))
             .collect::<Vec<(_, _)>>();

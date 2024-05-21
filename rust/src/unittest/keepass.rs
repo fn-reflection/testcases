@@ -31,7 +31,7 @@ impl Credential {
         let mut map = HashMap::new();
         for node in &db.root {
             match node {
-                keepass::NodeRef::Entry(e) => {
+                keepass::db::NodeRef::Entry(e) => {
                     let title = e.get_title().unwrap();
                     if keys.contains(title) {
                         let user_name = e.get_username().unwrap();
@@ -44,7 +44,7 @@ impl Credential {
                         map.insert(title, pat);
                     }
                 }
-                keepass::NodeRef::Group(_) => {}
+                keepass::db::NodeRef::Group(_) => {}
             }
         }
         let map_deser = serde::de::value::MapDeserializer::new(map.into_iter());
@@ -61,8 +61,8 @@ mod tests {
     fn from_keepass_db_ok() {
         let db = keepass::Database::open(
             &mut include_bytes!("../../test_files/keepass/testcases.kdbx").as_slice(),
-            Some(include_str!("../../test_files/keepass/master_password")),
-            None,
+            keepass::DatabaseKey::new()
+                .with_password(include_str!("../../test_files/keepass/master_password")),
         )
         .unwrap();
         let c = Credential::from_keepass_db(db);
@@ -74,8 +74,8 @@ mod tests {
     fn encrypt_and_decrypt_ok() {
         let db = keepass::Database::open(
             &mut include_bytes!("../../test_files/keepass/testcases.kdbx").as_slice(),
-            Some(include_str!("../../test_files/keepass/master_password")),
-            None,
+            keepass::DatabaseKey::new()
+                .with_password(include_str!("../../test_files/keepass/master_password")),
         )
         .unwrap();
         let c = Credential::from_keepass_db(db);

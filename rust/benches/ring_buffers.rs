@@ -10,7 +10,7 @@ fn circular_queue(c: &mut criterion::Criterion) {
             for i in 1..=10 {
                 q1.push(black_box(i));
             }
-            let _ = q1.iter().fold(0, |acc, x| acc + x);
+            let _ = q1.iter().sum::<i32>();
         })
     });
 }
@@ -23,7 +23,7 @@ fn spscrb(c: &mut criterion::Criterion) {
             let _ = tx.write(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
             let receive_arr = &mut [0, 0, 0];
             let _ = rx.read(receive_arr);
-            let _ = receive_arr.iter().fold(0, |acc, x| acc + x);
+            let _ = receive_arr.iter().sum::<i32>();
         })
     });
 }
@@ -35,7 +35,7 @@ fn arraydeque(c: &mut criterion::Criterion) {
             for i in 1..=10 {
                 let _ = q1.push_back(black_box(i));
             }
-            let _ = q1.iter().fold(0, |acc, v| acc + v);
+            let _ = q1.iter().sum::<i32>();
         })
     });
 }
@@ -47,7 +47,7 @@ fn bounded_vec_deque(c: &mut criterion::Criterion) {
             for i in 1..=10 {
                 let _ = q1.push_back(black_box(i));
             }
-            let _ = q1.iter().fold(0, |acc, v| acc + v);
+            let _ = q1.iter().sum::<i32>();
         })
     });
 }

@@ -7,19 +7,21 @@ fn main() {
         .unwrap()
         .block_on(async {
             let actual = Arc::new(Mutex::new(Vec::new()));
-            let shutdown = async_shutdown::Shutdown::new();
-
+            let shutdown = async_shutdown::ShutdownManager::new();
             tokio::spawn({
                 let actual = actual.clone();
                 let shutdown = shutdown.clone();
                 async move {
-                    if let Err(_) = tokio::signal::ctrl_c().await {
-                        actual.lock().unwrap().push(-1);
-                        println!("{:?}", actual.lock().unwrap());
-                        std::process::exit(1);
-                    } else {
-                        actual.lock().unwrap().push(0);
-                        shutdown.shutdown();
+                    match tokio::signal::ctrl_c().await {
+                        Err(_) => {
+                            actual.lock().unwrap().push(-1);
+                            println!("{:?}", actual.lock().unwrap());
+                            std::process::exit(1);
+                        }
+                        Ok(_) => {
+                            actual.lock().unwrap().push(0);
+                            shutdown.trigger_shutdown(0).unwrap();
+                        }
                     }
                 }
             });
@@ -44,9 +46,9 @@ fn main() {
                     }
                 })
             });
-            fut1.await.unwrap();
+            fut1.await.unwrap().unwrap();
             actual.lock().unwrap().push(11);
-            fut2.await.unwrap();
+            fut2.await.unwrap().unwrap();
             actual.lock().unwrap().push(12);
             shutdown.wait_shutdown_complete().await;
             actual.lock().unwrap().push(13);
