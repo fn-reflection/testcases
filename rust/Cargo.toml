@@ -42,7 +42,7 @@ name = "ring_buffers"
 
 [[bench]]
 harness = false
-name = "message_buses"
+name = "channels"
 
 [[bench]]
 harness = false
