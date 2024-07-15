@@ -82,7 +82,6 @@ macro_rules! avec {
 
 }
 
-
 #[macro_export]
 #[doc(hidden)]
 macro_rules! count {
@@ -94,12 +93,11 @@ macro_rules! count {
     (@SUBST; $_element:expr) => { () };
 }
 
-
 // unit testに対するマクロの展開方法
 // cargo expand --lib unittest::macro_training --tests
 
 // このファイルのテストの実行方法
-// cargo test unittest::macro_training  
+// cargo test unittest::macro_training
 
 #[test]
 fn macro_test_ok() {
@@ -134,7 +132,6 @@ fn vector_some_ok2() {
     assert_eq!(v[1], 43);
 }
 
-
 #[test]
 fn vector_some_ok3() {
     let v = vector![42; 3];
@@ -149,3 +146,9 @@ fn vector_some_ok3() {
 /// let x: Vec<u32> = rust_studies::vector![42; "foo"];
 /// ```
 struct CompileFailTest;
+
+fn main() {
+    println!("Hello, world!");
+    let v = vec![1, 2, 3];
+    let x = v.iter().into_iter();
+}
