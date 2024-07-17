@@ -132,25 +132,24 @@ class SqlTest < Minitest::Test
 
     log('テストケース3: preload SQLは制御できない')
     user = User.preload(posts: { post_comments: :post_comment_reviews }).find_by(name: 'Alice')
-    user.partial_describe(title_to_find: 'Post 2') # 無駄にデータを引いてしまうし、関数も増える
+    user.partial_describe(title_to_find: 'Post 2') # 無駄にデータを引いてしまう、preloadは全てのデータを引くため、絞り込みができない
 
-    log('テストケース4: preloadに特化した関連')
+    log('テストケース4: preloadに特化した関連で事前に絞り込む')
     user = User.preload(remarkable_posts: { post_comments: :post_comment_reviews }).find_by(name: 'Alice')
-    user.remarkable_describe # 無駄なデータロードはないが、保守しにくい関連も増えるし、それに沿ったデータ呼び出しが必要
+    user.remarkable_describe # 無駄なデータロードはないが、保守しにくい関連も増えるし、呼び出す関連も切り替えが必要で汎用性低い
 
     log('テストケース5: APIインタフェースを無視できるなら実は問題は簡単')
     user.posts.preload(post_comments: :post_comment_reviews).where(posts: { title: 'Post 2' }).each { |post|  post.describe(user:) }
     # メソッドを使わなくていいのであれば、当然こう書くこともできる
-    # 実装の重要性あるいは不要なインタフェースを定義しないことの重要性を強調したい
-    # つまりfull_describeなどのインタフェースは(特にパフォーマンス指向の設計をするにあたり)適切ではない
+    # 実装の重要性あるいは不要なメソッドを定義しないことの重要性を強調したい
 
     log('テストケース6: eager_loadとpreloadの併用')
     user = User.eager_load(:posts).preload(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Alice')
-    user.full_describe # ちょうどいい、partial_describeも不要、子テーブルはJOIN、孫テーブル以下はpreloadで取得といった制御ができる
+    user.full_describe # ちょうどいい、partial_describeも不要、子テーブルはJOIN、孫テーブル以下はpreloadで取得といった細やかな制御ができる
 
     log('テストケース7: includesの意図しない挙動')
     user = User.includes(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Alice')
-    user.full_describe # 有無も言わさず全部JOINになる、意図せずスローダウンする原因になりうる、includesは使うべきではない
+    user.full_describe # その必要がないテーブルも全部eager_loadに切り替わる、意図せずスローダウンする原因になりうる、includesは使うべきではない
 
     log('テストケース8: 既存includesのリファクタリング')
     # SQLが発行される直前でeager_loading?を呼び出すと、includesがeager_loadになるかpreloadになるかを判定できる
