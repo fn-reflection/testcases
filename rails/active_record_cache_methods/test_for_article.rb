@@ -8,7 +8,7 @@ require 'bundler/inline'
 gemfile(true) do
   source 'https://rubygems.org'
   gem 'rails'
-  gem 'sqlite3'
+  gem 'sqlite3', '~> 1.4'
 end
 
 require 'active_record'
@@ -119,23 +119,23 @@ end
 class SqlTest < Minitest::Test
   def test_for_article
     # テストデータをsetup
-    setup_associations(user: User.create(name: 'Foo'))
+    setup_associations(user: User.create(name: 'Alice'))
     ActiveRecord::Base.logger = Logger.new($stdout)
 
     log('テストケース1: キャッシュなし')
-    user = User.find_by(name: 'Foo') # sql 1 + 1 + 3 + 3*3 = 14、いわゆるN+1問題
-    User.find_by(name: 'Foo').full_describe
+    user = User.find_by(name: 'Alice') # sql 1 + 1 + 3 + 3 * 3 = 14、いわゆるN+1問題
+    User.find_by(name: 'Alice').full_describe
 
     log('テストケース2: preloadでキャッシュ')
-    user = User.preload(posts: { post_comments: :post_comment_reviews }).find_by(name: 'Foo')
+    user = User.preload(posts: { post_comments: :post_comment_reviews }).find_by(name: 'Alice')
     user.full_describe # sql 1 + 1 + 1 + 1 = 4、スマートなSQL
 
     log('テストケース3: preload SQLは制御できない')
-    user = User.preload(posts: { post_comments: :post_comment_reviews }).find_by(name: 'Foo')
+    user = User.preload(posts: { post_comments: :post_comment_reviews }).find_by(name: 'Alice')
     user.partial_describe(title_to_find: 'Post 2') # 無駄にデータを引いてしまうし、関数も増える
 
     log('テストケース4: preloadに特化した関連')
-    user = User.preload(remarkable_posts: { post_comments: :post_comment_reviews }).find_by(name: 'Foo')
+    user = User.preload(remarkable_posts: { post_comments: :post_comment_reviews }).find_by(name: 'Alice')
     user.remarkable_describe # 無駄なデータロードはないが、保守しにくい関連も増えるし、それに沿ったデータ呼び出しが必要
 
     log('テストケース5: APIインタフェースを無視できるなら実は問題は簡単')
@@ -145,11 +145,11 @@ class SqlTest < Minitest::Test
     # つまりfull_describeなどのインタフェースは(特にパフォーマンス指向の設計をするにあたり)適切ではないということなのだが、それはなぜだろう？
 
     log('テストケース6: eager_loadとpreloadの併用')
-    user = User.eager_load(:posts).preload(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Foo')
+    user = User.eager_load(:posts).preload(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Alice')
     user.full_describe # ちょうどいい、partial_describeも不要、子テーブルはJOIN、孫テーブル以下はpreloadで取得といった制御ができる
 
     log('テストケース7: includesの意図しない挙動')
-    user = User.eager_load(:posts).includes(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Foo')
+    user = User.eager_load(:posts).includes(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Alice')
     user.full_describe # 有無も言わさず全部JOINになる、意図せずスローダウンする原因になりうる、includesは使うべきではない
 
     log('テストケース8: 既存includesのリファクタリング')
