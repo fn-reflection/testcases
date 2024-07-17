@@ -5,6 +5,7 @@
 # bundlerも必要です
 require 'bundler/inline'
 
+# 必要なgemをインストール
 gemfile(true) do
   source 'https://rubygems.org'
   gem 'rails'
@@ -19,15 +20,18 @@ ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:'
 
 # データスキーマ定義
 ActiveRecord::Schema.define do
+  # ユーザデータ
   create_table :users do |t|
     t.text :name
   end
 
+  # ユーザが投稿したテキスト
   create_table :posts do |t|
     t.integer :user_id
     t.text :title
   end
 
+  # ユーザが投稿したテキストに対するコメント
   create_table :post_comments do |t|
     t.integer :post_id
     t.text :comment
@@ -50,21 +54,21 @@ class User < ActiveRecord::Base
   # 射影を使うことでカバリングインデックスによる高速化も狙える
   has_many :remarkable_posts, -> { where(posts: { title: 'Post 2' }) }, class_name: 'Post'
 
-  # 関連テーブルを含めてuser.postsに関する情報を出力する
+  # user.postsに関する情報を関連を含めて出力する
   def full_describe
     posts.each do |post|
       post.describe(user: self)
     end
   end
 
-  # 関連テーブルを含めてある特定の名前を持つuser.postsに関する情報を出力する
+  # ある特定のタイトルを持つuser.postsに関する情報を関連を含めて出力する
   def partial_describe(title_to_find:)
     posts.filter{ |post| post.title == title_to_find }.each do |post|
       post.describe(user: self)
     end
   end
 
-  # preloadに特化した関連を用いて絞り込んだ情報を出力する
+  # remarkable_postsという特化した関連を用いて絞り込んだ情報を関連を含めて出力する
   def remarkable_describe()
     remarkable_posts.each do |post|
       post.describe(user: self)
@@ -73,7 +77,6 @@ class User < ActiveRecord::Base
 end
 
 
-# ユーザの投稿ポスト
 class Post < ActiveRecord::Base
   belongs_to :person
   has_many :post_comments
@@ -99,19 +102,6 @@ class PostCommentReview < ActiveRecord::Base
   belongs_to :post_comment
 end
 
-# 今回の例ではhas_many関連ごとに3つのデータを作成するが、実環境ではもっとデータが多いとイメージしてほしい
-def setup_associations(user:)
-  1.upto(3) do |i|
-    post = user.posts.create(title: "Post #{i}")
-    1.upto(3) do |j|
-      post.post_comments.create(comment: "Comment #{j}")
-      1.upto(3) do |k|
-        post.post_comments.last.post_comment_reviews.create(grade: k)
-      end
-    end
-  end
-end
-
 def log(msg)
   ActiveRecord::Base.logger.info(msg)
 end
@@ -119,12 +109,22 @@ end
 class SqlTest < Minitest::Test
   def test_for_article
     # テストデータをsetup
-    setup_associations(user: User.create(name: 'Alice'))
+    # 今回の例ではhas_many関連ごとに3つのデータを作成するが、実環境ではもっとデータが多いとイメージしてほしい
+    user = User.create(name: 'Alice')
+    1.upto(3) do |i|
+      post = user.posts.create(title: "Post #{i}")
+      1.upto(3) do |j|
+        post.post_comments.create(comment: "Comment #{j}")
+        1.upto(3) do |k|
+          post.post_comments.last.post_comment_reviews.create(grade: k)
+        end
+      end
+    end
     ActiveRecord::Base.logger = Logger.new($stdout)
 
     log('テストケース1: キャッシュなし')
     user = User.find_by(name: 'Alice') # sql 1 + 1 + 3 + 3 * 3 = 14、いわゆるN+1問題
-    User.find_by(name: 'Alice').full_describe
+    user.full_describe
 
     log('テストケース2: preloadでキャッシュ')
     user = User.preload(posts: { post_comments: :post_comment_reviews }).find_by(name: 'Alice')
@@ -142,14 +142,14 @@ class SqlTest < Minitest::Test
     user.posts.preload(post_comments: :post_comment_reviews).where(posts: { title: 'Post 2' }).each { |post|  post.describe(user:) }
     # メソッドを使わなくていいのであれば、当然こう書くこともできる
     # 実装の重要性あるいは不要なインタフェースを定義しないことの重要性を強調したい
-    # つまりfull_describeなどのインタフェースは(特にパフォーマンス指向の設計をするにあたり)適切ではないということなのだが、それはなぜだろう？
+    # つまりfull_describeなどのインタフェースは(特にパフォーマンス指向の設計をするにあたり)適切ではない
 
     log('テストケース6: eager_loadとpreloadの併用')
     user = User.eager_load(:posts).preload(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Alice')
     user.full_describe # ちょうどいい、partial_describeも不要、子テーブルはJOIN、孫テーブル以下はpreloadで取得といった制御ができる
 
     log('テストケース7: includesの意図しない挙動')
-    user = User.eager_load(:posts).includes(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Alice')
+    user = User.includes(posts: { post_comments: :post_comment_reviews }).where(posts: { title: 'Post 2' }).find_by(name: 'Alice')
     user.full_describe # 有無も言わさず全部JOINになる、意図せずスローダウンする原因になりうる、includesは使うべきではない
 
     log('テストケース8: 既存includesのリファクタリング')
