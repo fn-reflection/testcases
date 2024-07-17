@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  active_record_cache_methods:
+    container_name: active_record_cache_methods
+    image: ruby:3.3.0
+    volumes:
+      - type: bind
+        source: ./
+        target: /myapp
