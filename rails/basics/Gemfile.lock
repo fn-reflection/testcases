@@ -129,6 +129,12 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
+    parallel (1.26.3)
+    parallel_rspec (2.4.1)
+      rake (> 10.0)
+      rspec
+    parallel_tests (4.7.2)
+      parallel
     psych (5.2.0)
       stringio
     public_suffix (6.0.1)
@@ -236,6 +242,8 @@ PLATFORMS
 DEPENDENCIES
   capybara
   debug
+  parallel_rspec
+  parallel_tests
   puma (~> 5.0)
   rails (~> 7.0.4, >= 7.0.4.2)
   rspec
