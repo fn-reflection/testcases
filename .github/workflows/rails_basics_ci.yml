@@ -1,13 +1,6 @@
-# https://techblog.raksul.com/entry/2022/12/13/000000
-
 name: rust_ci
 on:
   push:
-    branches:
-      - main
-    paths:
-      - "rails/basics"
-      - "!**.md"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
