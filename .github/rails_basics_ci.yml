@@ -1,0 +1,57 @@
+# https://techblog.raksul.com/entry/2022/12/13/000000
+
+name: rust_ci
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "rails/basics"
+      - "!**.md"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TEST_JOB_PARALLEL_COUNT: 2
+  RAILS_ENV: test
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        group_index: ["0,1", "2,3"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Setup DB
+        run: bundle exec rails "parallel:setup[`nproc`]"
+        working-directory: rails/basics
+      - name: Run rspec in parallel
+        run: bundle exec parallel_rspec -n $((${TEST_JOB_PARALLEL_COUNT} * `nproc`)) --only-group ${{ matrix.group_index }}
+        working-directory: rails/basics
+      - name: Upload test result
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-result-${{ matrix.group_index }}
+          path: |
+            rails/basics/test_results/
+            rails/basics/coverage/.resultset*.json
+          include-hidden-files: true
+          if-no-files-found: ignore
