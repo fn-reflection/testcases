@@ -32,6 +32,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          working-directory: rails/basics
       - name: Setup DB
         run: bundle exec rails "parallel:setup[`nproc`]"
         working-directory: rails/basics
