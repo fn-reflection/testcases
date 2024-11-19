@@ -1,19 +1,20 @@
 source "https://rubygems.org"
 ruby "3.3.6"
 
-gem "sqlite3", "~> 2.0"
-gem "puma", "~> 5.0"
-gem "rails", "~> 7.0.4", ">= 7.0.4.2"
+gem "sqlite3"
+gem "puma"
+gem "rails"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem "parallel_tests"
 end
 
 group :test do
   gem "capybara"
-  gem "parallel_rspec"
-  gem "parallel_tests"
   gem "rspec"
+  gem "rspec-rails"
+  gem "parallel_rspec"
   gem "selenium-webdriver"
   gem "webdrivers"
 end
