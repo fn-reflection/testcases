@@ -7,7 +7,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  TEST_JOB_PARALLEL_COUNT: 2
+  NUM_OF_INSTANCE: 4
   RAILS_ENV: test
 
 defaults:
@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group_index: ["0,1", "2,3"]
+        group_index: ["0,1", "2,3", "4,5", "6,7"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,10 +34,12 @@ jobs:
           bundler-cache: true
           working-directory: rails/basics
       - name: Setup DB
+        # nproc(=2)個のデータベースをセットアップする
         run: bundle exec rails "parallel:setup[`nproc`]"
         working-directory: rails/basics
       - name: Run rspec in parallel
-        run: bundle exec parallel_rspec -n $((${TEST_JOB_PARALLEL_COUNT} * `nproc`)) --only-group ${{ matrix.group_index }}
+        # インスタンス数×nproc(=2)個にテストグループを分割し、そのうち2グループ実行する
+        run: bundle exec parallel_rspec -n $((${NUM_OF_INSTANCE} * `nproc`)) --only-group ${{ matrix.group_index }}
         working-directory: rails/basics
       - name: Upload test result
         if: ${{ success() || failure() }}
