@@ -53,6 +53,7 @@ jobs:
           glob: spec/**/*_spec.rb
           index: ${{ matrix.group_index }}
           total: ${{ strategy.job-total }}
+          working-directory: rails/basics
       - name: echo partitions
         run: echo "$(seq -s, $((${{ matrix.group_index }} * $(nproc))) $((${{ matrix.group_index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')"
       - name: Run rspec in parallel
