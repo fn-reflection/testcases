@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe 'foo' do
-    it { expect(2 + 2).to eq 4 }
+RSpec.describe 'foo7' do
+    it { expect(4 + 3).to eq 7 }
 end
