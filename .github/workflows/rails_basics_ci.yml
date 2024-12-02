@@ -37,6 +37,8 @@ jobs:
         # nproc(=2)個のデータベースをセットアップする
         run: bundle exec rails "parallel:setup[`nproc`]"
         working-directory: rails/basics
+      - name: echo partitions
+        run: echo $((${NUM_OF_INSTANCE} * `nproc`))
       - name: Run rspec in parallel
         # インスタンス数×nproc(=2)個にテストグループを分割し、そのうち2グループ実行する
         run: bundle exec parallel_rspec -n $((${NUM_OF_INSTANCE} * `nproc`)) --only-group ${{ matrix.group_index }} --verbose
