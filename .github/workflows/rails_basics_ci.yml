@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group_index: ["0,1", "2,3"]
+        group_index: [0, 1, 2, 3]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,10 +38,10 @@ jobs:
         run: bundle exec rails "parallel:setup[`nproc`]"
         working-directory: rails/basics
       - name: echo partitions
-        run: echo $((${NUM_OF_INSTANCE} * `nproc`))
+        run: echo $(printf "%s," {$((matrix.group_index * `nproc`))..$((START + `nproc` - 1))} | sed 's/,$//')
       - name: Run rspec in parallel
         # インスタンス数×nproc(=2)個にテストグループを分割し、そのうち2グループ実行する
-        run: bundle exec parallel_rspec -n $((${NUM_OF_INSTANCE} * `nproc`)) --only-group ${{ matrix.group_index }} --verbose
+        run: bundle exec parallel_rspec -n $((${{ strategy.job-total }} * `nproc`)) --only-group $(printf "%s," {$((matrix.group_index * `nproc`))..$((START + `nproc` - 1))} | sed 's/,$//') --verbose
         working-directory: rails/basics
       - name: Upload test result
         if: ${{ success() || failure() }}
