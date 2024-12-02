@@ -7,7 +7,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NUM_OF_INSTANCE: 2
   RAILS_ENV: test
 
 defaults:
@@ -38,10 +37,10 @@ jobs:
         run: bundle exec rails "parallel:setup[`nproc`]"
         working-directory: rails/basics
       - name: echo partitions
-        run: echo $(printf "%s," {$((matrix.group_index * `nproc`))..$((START + `nproc` - 1))} | sed 's/,$//')
+        run: echo $(printf "%s," {$((${{ matrix.group_index }} * `nproc`))..$((${{ matrix.group_index }} * `nproc` + `nproc` - 1))} | sed 's/,$//')
       - name: Run rspec in parallel
         # インスタンス数×nproc(=2)個にテストグループを分割し、そのうち2グループ実行する
-        run: bundle exec parallel_rspec -n $((${{ strategy.job-total }} * `nproc`)) --only-group $(printf "%s," {$((matrix.group_index * `nproc`))..$((START + `nproc` - 1))} | sed 's/,$//') --verbose
+        run: bundle exec parallel_rspec -n $((${{ strategy.job-total }} * `nproc`)) --only-group $(printf "%s," {$((${{ matrix.group_index }} * `nproc`))..$((${{ matrix.group_index }} * `nproc` + `nproc` - 1))} | sed 's/,$//') --verbose
         working-directory: rails/basics
       - name: Upload test result
         if: ${{ success() || failure() }}
