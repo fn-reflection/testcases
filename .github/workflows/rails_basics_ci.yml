@@ -36,11 +36,28 @@ jobs:
         # nproc(=2)個のデータベースをセットアップする
         run: bundle exec rails "parallel:setup[`nproc`]"
         working-directory: rails/basics
+      - name: Download all test results for default branch
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: test-result-*
+          name_is_regexp: true
+          path: ${{ runner.temp }}/default-branch-test-results
+          branch: ${{ github.event.repository.default_branch }}
+          workflow_conclusion: success
+          if_no_artifact_found: warn
+      - name: Split tests by timings
+        uses: r7kamura/split-tests-by-timings@v0
+        id: split_tests
+        with:
+          reports: ${{ runner.temp }}/default-branch-test-results/**/test_results
+          glob: spec/**/*_spec.rb
+          index: ${{ matrix.group_index }}
+          total: ${{ strategy.job-total }}
       - name: echo partitions
         run: echo "$(seq -s, $((${{ matrix.group_index }} * $(nproc))) $((${{ matrix.group_index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')"
       - name: Run rspec in parallel
         # インスタンス数×nproc(=2)個にテストグループを分割し、そのうち2グループ実行する
-        run: bundle exec parallel_rspec -n $((${{ strategy.job-total }} * `nproc`)) --only-group "$(seq -s, $((${{ matrix.group_index }} * $(nproc))) $((${{ matrix.group_index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')" --verbose
+        run: bundle exec parallel_rspec -n `nproc` ${{ steps.split_tests.outputs.paths }}
         working-directory: rails/basics
       - name: Upload test result
         if: ${{ success() || failure() }}
