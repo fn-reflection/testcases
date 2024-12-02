@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group_index: [0, 1, 2, 3]
+        group_index: [0]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
