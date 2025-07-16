@@ -13,6 +13,7 @@ end
 group :test do
   gem "capybara"
   gem "rspec"
+  gem 'rspec_junit_formatter'
   gem "rspec-rails"
   gem "parallel_rspec"
   gem "selenium-webdriver"
