@@ -1,0 +1,48 @@
+version: 2.1
+
+executors:
+  executor1:
+    working_directory: ~/workdir
+    docker:
+      - image: cimg/ruby:3.3.6-node
+        environment:
+          RAILS_ENV: test
+          RUBY_YJIT_ENABLE: 1
+          TZ: /usr/share/zoneinfo/Asia/Tokyo
+          LANG: ja_JP.UTF-8
+          LC_ALL: C.UTF-8
+          LANGUAGE: ja_JP.UTF-8
+
+jobs:
+  setup:
+    executor:
+      name: executor1
+    resource_class: small
+    steps:
+      - checkout
+
+  test:
+    executor:
+      name: executor1
+    resource_class: small
+    parallelism: 2
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd rails/basics && bundle install
+      - run:
+          command: |
+            cd rails/basics
+            TEST_FILES=$(circleci tests glob "spec/**/*_spec.rb")
+            echo "$TEST_FILES"
+            echo "$TEST_FILES" | circleci tests run --command="xargs bundle exec rspec -r rspec_junit_formatter --format RspecJunitFormatter -o test_reports/junit.xml" --verbose --split-by=timings --timings-type=name
+      - store_test_results:
+          path: rails/basics/test_reports
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - setup
+      - test
