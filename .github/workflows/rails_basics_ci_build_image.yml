@@ -21,7 +21,7 @@ jobs:
 
       - uses: docker/build-push-action@v5
         with:
-          context: ./.github/docker/rails_basics_ci_build_image
+          context: .github/workflows/rails_basics_ci_build_image/docker
           push: true
           tags: latest
           cache-from: type=gha
