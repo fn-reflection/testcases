@@ -1,0 +1,27 @@
+name: rails_basics_ci_build_image
+
+on:
+  workflow_dispatch
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    # permissions:
+    #   contents: read
+    #   packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./.github/docker/rails_basics_ci_build_image
+          push: true
+          tags: latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
