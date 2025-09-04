@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y \
     libmagickwand-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# ImageMagick動作確認
-RUN magick --version
+# ImageMagickコマンド動作確認
+RUN convert --version
 
 WORKDIR /workdir
