@@ -23,6 +23,6 @@ jobs:
         with:
           context: .github/workflows/rails_basics_ci_build_image/docker
           push: true
-          tags: latest
+          tags: ghcr.io/${{ github.repository }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
