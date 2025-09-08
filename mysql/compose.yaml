@@ -1,11 +1,10 @@
-version: "3.8"
 services:
   testcases_mysql:
     container_name: testcases_mysql
     build:
       dockerfile: ./docker/mysql/Dockerfile
       args:
-        - MYSQL_VERSION=8.0.35
+        - MYSQL_VERSION=8.0.40
     volumes:
       - type: bind
         source: bind/data
@@ -21,3 +20,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "127.0.0.1:53306:3306"
+    networks:
+      - testcases_mysql_default
+
+networks:
+  testcases_mysql_default:
+    driver: bridge
