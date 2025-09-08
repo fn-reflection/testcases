@@ -21,6 +21,21 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/fn-reflection/testcases:latest
     timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.4.6
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test
+          MYSQL_USER: user
+          MYSQL_PASSWORD: pass
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     permissions:
       contents: read
       actions: read
@@ -29,8 +44,6 @@ jobs:
       matrix:
         group_index: [0,1]
     steps:
-      # コンテナで動いているかを検証するための不要なテストコード
-      - run: convert --version
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:

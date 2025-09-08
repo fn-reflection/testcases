@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     imagemagick \
     libmagickwand-dev \
+    libmysqlclient-dev \
     # to install psych gem
     libyaml-dev \
     && rm -rf /var/lib/apt/lists/*
