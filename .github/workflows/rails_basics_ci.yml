@@ -50,7 +50,7 @@ jobs:
           bundler-cache: true
           working-directory: rails/basics
       - run: |
-          mysql -e "CREATE DATABASE IF NOT EXISTS test2;"
+          mysql -h mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS test2;"
       # nproc(=2)個のデータベースをセットアップする
       - run: bundle exec rails "parallel:setup[`nproc`]"
         working-directory: rails/basics
