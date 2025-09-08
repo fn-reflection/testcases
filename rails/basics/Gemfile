@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 ruby "3.3.6"
 
-gem "mysql"
+gem "mysql2"
 gem "sqlite3"
 gem "puma"
 gem "rails"

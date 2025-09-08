@@ -119,6 +119,7 @@ GEM
     matrix (0.4.2)
     mini_mime (1.1.5)
     minitest (5.25.1)
+    mysql2 (0.5.6)
     net-imap (0.5.1)
       date
       net-protocol
@@ -276,6 +277,7 @@ PLATFORMS
 DEPENDENCIES
   capybara
   debug
+  mysql2
   parallel_rspec
   parallel_tests
   puma
