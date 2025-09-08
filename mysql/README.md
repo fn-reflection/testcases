@@ -6,7 +6,7 @@ bindディレクトリ以下にdata, logディレクトリがmountされます�
 ## docker containerの操作
 ```sh
 # UID GIDを設定することで現在のユーザ権限と同じ権限でデータが作られる
-UID=$UID GID=$GID docker compose up -d # dockerコンテナ起動
+UID=$(id -u) GID=$(id -g) docker compose up # dockerコンテナ起動
 mysql --host 127.0.0.1 --port 53306 --user root -proot --database sandbox # mysql CLIの実行
 docker exec -it testcases_mysql /bin/bash # dockerにbashでアクセス
 ```
