@@ -9,8 +9,11 @@ development:
 
 test:
   <<: *default
-  database: db/test<%= ENV['TEST_ENV_NUMBER'] %>.sqlite3
-
+  adapter: mysql2
+  host: mysql
+  database: test<%= ENV['TEST_ENV_NUMBER'] %>
+  username: user
+  password: pass
 production:
   <<: *default
   database: db/production.sqlite3
