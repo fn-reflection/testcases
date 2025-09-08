@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libmysqlclient-dev \
     # to install psych gem
     libyaml-dev \
+    mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # ImageMagickコマンド動作確認
