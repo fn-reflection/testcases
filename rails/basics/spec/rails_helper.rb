@@ -19,10 +19,12 @@ RSpec.configure do |config|
 
   if ENV['CI']
     require 'rspec_junit_formatter'
+    report_dir = 'test_reports'
+    FileUtils.mkdir_p(report_dir)
       config.add_formatter(
         RspecJunitFormatter,
         File.join(
-          "test_reports",
+          report_dir,
           "junit-#{ENV['GROUP_INDEX'] || '0'}-#{ENV['TEST_ENV_NUMBER'] || '1'}.xml"
         )
       )
