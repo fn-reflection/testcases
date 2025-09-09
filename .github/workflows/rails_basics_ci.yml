@@ -34,9 +34,10 @@ jobs:
         options: >-
           --tmpfs /var/lib/mysql:rw,size=1024m
           --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-start-period 5s
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 30
     permissions:
       contents: read
       actions: read
