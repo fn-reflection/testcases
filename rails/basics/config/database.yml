@@ -12,8 +12,8 @@ test:
   adapter: mysql2
   host: mysql
   database: test<%= ENV['TEST_ENV_NUMBER'] %>
-  username: user
-  password: pass
+  username: root
+  password: root
 production:
   <<: *default
   database: db/production.sqlite3
