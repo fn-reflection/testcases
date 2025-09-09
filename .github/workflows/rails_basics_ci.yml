@@ -86,7 +86,7 @@ jobs:
       - run: echo "$(seq -s, $((${{ matrix.group_index }} * $(nproc))) $((${{ matrix.group_index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')"
       # インスタンス数×nproc個にテストグループを分割し、そのうち2グループ実行する
       - run: |
-          SPEC_OPTS="--format RspecJunitFormatter --out test_reports/junit-${{ matrix.group_index }}-\${TEST_ENV_NUMBER}.xml --format documentation" \
+          SPEC_OPTS="--format RspecJunitFormatter --out test_reports/junit-${{ matrix.group_index }}-$TEST_ENV_NUMBER.xml --format documentation" \
           bundle exec parallel_rspec -n `nproc` ${{ steps.split_tests.outputs.paths }}
         working-directory: rails/basics
       - uses: actions/upload-artifact@v4
