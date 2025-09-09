@@ -1,0 +1,44 @@
+{
+  "query_block": {
+    "select_id": 1,
+    "cost_info": {
+      "query_cost": "65887.23"
+    },
+    "ordering_operation": {
+      "using_filesort": true,
+      "table": {
+        "table_name": "plan_change_test",
+        "access_type": "ref",
+        "possible_keys": [
+          "idx_category"
+        ],
+        "key": "idx_category",
+        "used_key_parts": [
+          "category"
+        ],
+        "key_length": "1023",
+        "ref": [
+          "const"
+        ],
+        "rows_examined_per_scan": 439212,
+        "rows_produced_per_join": 439212,
+        "filtered": "100.00",
+        "cost_info": {
+          "read_cost": "21966.03",
+          "eval_cost": "43921.20",
+          "prefix_cost": "65887.23",
+          "data_read_per_join": "1G"
+        },
+        "used_columns": [
+          "id",
+          "title",
+          "category",
+          "text1",
+          "text2",
+          "text3"
+        ],
+        "attached_condition": "regexp_like(`sandbox`.`plan_change_test`.`title`,'あかさたな')"
+      }
+    }
+  }
+}

@@ -1,7 +1,8 @@
 # MySQL
 ## 前提
-コンテナを立ち上げるとport 53306を通じてMySQLに接続できます。(docker-compose.ymlでポート調整可能です。)
-bindディレクトリ以下にdata, logディレクトリがmountされます。
+- コンテナを立ち上げるとport 53306を通じてMySQLに接続できます。(docker-compose.ymlでポート調整可能です。)
+- bindディレクトリ以下にdata, logディレクトリがmountされます。
+- テスト用環境でありまともなパスワード管理は意図的にしていません。
 
 ## docker containerの操作
 ```sh
