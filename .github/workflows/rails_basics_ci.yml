@@ -88,7 +88,13 @@ jobs:
       # インスタンス数×nproc個にテストグループを分割し、そのうち2グループ実行する
       - env:
           GROUP_INDEX: ${{ matrix.group_index }}
-        run: bundle exec parallel_rspec -n $(nproc) $PATHS
+        run:
+          bundle exec parallel_rspec \
+            -n $(nproc) \
+            --format RspecJunitFormatter \
+            --out test_reports/junit-${{ matrix.group_index }}-$TEST_ENV_NUMBER.xml \
+            --format documentation \
+            ${{ steps.split_tests.outputs.paths }}
         working-directory: rails/basics
       - uses: actions/upload-artifact@v4
         if: ${{ success() || failure() }}

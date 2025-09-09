@@ -16,16 +16,4 @@ RSpec.configure do |config|
   ]
   config.use_transactional_fixtures = true
   config.filter_rails_from_backtrace!
-
-  require 'rspec_junit_formatter'
-  report_dir = 'test_reports'
-  FileUtils.mkdir_p(report_dir)
-    config.add_formatter(
-      RspecJunitFormatter,
-      File.join(
-        report_dir,
-        "junit-#{ENV['GROUP_INDEX'] || '0'}-#{ENV['TEST_ENV_NUMBER'] || '1'}.xml"
-      )
-    )
-    config.add_formatter(:documentation)
 end
