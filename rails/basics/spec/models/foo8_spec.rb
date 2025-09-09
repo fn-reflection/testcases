@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe 'foo8' do
-    it { expect(4 + 4).to eq 8 }
+  it do
+    sleep(8)
+    expect(0 + 8).to eq 8
+  end
 end
