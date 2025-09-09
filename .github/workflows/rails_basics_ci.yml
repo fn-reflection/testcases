@@ -10,6 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  CI: true
   RAILS_ENV: test
 
 defaults:
