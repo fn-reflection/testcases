@@ -60,30 +60,40 @@ jobs:
         working-directory: rails/basics
       - uses: dawidd6/action-download-artifact@v6
         with:
-          name: test-result-*
+          name: test-report-.*
           name_is_regexp: true
-          path: ${{ runner.temp }}/default-branch-test-results
-          branch: ${{ github.event.repository.default_branch }}
+          path: prev
+          branch: ${{ github.ref_name }}
           workflow_conclusion: success
           if_no_artifact_found: warn
+      - run: |
+          PREV_REPORT_DIR=prev
+          MERGED_REPORT_DIR=prev_merged
+          echo $PREV_REPORT_DIR
+          mkdir -p $PREV_REPORT_DIR
+          echo $MERGED_REPORT_DIR
+          mkdir -p $MERGED_REPORT_DIR
+          find $PREV_REPORT_DIR -type f -name 'junit-*.xml' -exec mv {} $MERGED_REPORT_DIR \;
+          ls $MERGED_REPORT_DIR
       - uses: r7kamura/split-tests-by-timings@v0
         id: split_tests
         with:
-          reports: ${{ runner.temp }}/default-branch-test-results/**/test_results
+          reports: prev_merged
           glob: spec/**/*_spec.rb
           index: ${{ matrix.group_index }}
           total: ${{ strategy.job-total }}
           working-directory: rails/basics
       - run: echo "$(seq -s, $((${{ matrix.group_index }} * $(nproc))) $((${{ matrix.group_index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')"
       # インスタンス数×nproc個にテストグループを分割し、そのうち2グループ実行する
-      - run: bundle exec parallel_rspec -n `nproc` ${{ steps.split_tests.outputs.paths }}
+      - run: |
+          SPEC_OPTS="--format RspecJunitFormatter --out test_reports/junit-${{ matrix.group_index }}-\${TEST_ENV_NUMBER}.xml --format documentation" \
+          bundle exec parallel_rspec -n `nproc` ${{ steps.split_tests.outputs.paths }}
         working-directory: rails/basics
       - uses: actions/upload-artifact@v4
         if: ${{ success() || failure() }}
         with:
-          name: test-result-${{ matrix.group_index }}
+          name: test-report-${{ matrix.group_index }}
           path: |
-            rails/basics/test_results/
-            rails/basics/coverage/.resultset*.json
+            rails/basics/test_reports/
           include-hidden-files: true
           if-no-files-found: ignore
