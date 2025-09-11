@@ -120,3 +120,8 @@ jobs:
     steps:
       - run: |
           echo hello branch protection;
+
+  use-reusable:
+    uses: ./.github/workflows/reusable/dummy-in-reusable.yml
+    with:
+      message: use-reusable
