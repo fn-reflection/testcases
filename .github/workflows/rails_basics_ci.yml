@@ -1,8 +1,5 @@
 name: rails_basic_ci
 on:
-  push:
-    paths-ignore:
-      - '.github/**/*'
   pull_request:
     types: [opened, synchronize]
   workflow_dispatch:
@@ -47,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group_index: [0,1]
+        group_index: [0,1,2,3]
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -83,29 +80,34 @@ jobs:
         with:
           reports: prev_merged
           glob: spec/**/*_spec.rb
-          index: ${{ matrix.group_index }}
+          index: ${{ strategy.job-index }}
           total: ${{ strategy.job-total }}
           working-directory: rails/basics
-      - run: echo "$(seq -s, $((${{ matrix.group_index }} * $(nproc))) $((${{ matrix.group_index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')"
+      - run: echo "$(seq -s, $((${{ strategy.job-index }} * $(nproc))) $((${{ strategy.job-index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')"
       # インスタンス数×nproc個にテストグループを分割し、そのうち2グループ実行する
       - env:
-          GROUP_INDEX: ${{ matrix.group_index }}
-        run:
-          bundle exec parallel_rspec \
-            -n $(nproc) \
-            --format RspecJunitFormatter \
-            --out test_reports/junit-${{ matrix.group_index }}-$TEST_ENV_NUMBER.xml \
-            --format documentation \
-            ${{ steps.split_tests.outputs.paths }}
+          GHA_JOB_INDEX: ${{ strategy.job-index }}
+        run: |
+          bundle
+          bundle exec parallel_rspec -n $(nproc) ${{ steps.split_tests.outputs.paths }}
         working-directory: rails/basics
       - uses: actions/upload-artifact@v4
         if: ${{ success() || failure() }}
         with:
-          name: test-report-${{ matrix.group_index }}
+          name: test-report-${{ strategy.job-index }}
           path: |
             rails/basics/test_reports/
           include-hidden-files: true
           if-no-files-found: ignore
+
+  all-test-are-passed:
+    runs-on: ubuntu-latest
+    needs: [test]
+    if: always()
+    steps:
+      - run: |
+          test "${{ needs.test.result }}" = "success"
+
   dummy:
     runs-on: ubuntu-latest
     strategy:
@@ -114,4 +116,9 @@ jobs:
         group_index: [0,1]
     steps:
       - run: |
-          echo hello;
+          echo hello branch protection;
+
+  use-reusable:
+    uses: ./.github/workflows/reusable-dummy.yml
+    with:
+      message: use-reusable

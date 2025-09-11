@@ -1,0 +1,23 @@
+on:
+  workflow_call:
+    inputs:
+      message:
+        type: string
+        required: true
+
+jobs:
+  dummy-in-reusable:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        group_index: [0,1]
+    steps:
+      - run: |
+          echo hello branch ${{ inputs.message }};
+  all-test-are-passed:
+    runs-on: ubuntu-latest
+    needs: [dummy-in-reusable]
+    if: always()
+    steps:
+      - run: test "${{ needs.dummy-in-reusable.result }}" = "success"
