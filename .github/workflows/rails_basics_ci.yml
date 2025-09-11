@@ -1,8 +1,5 @@
 name: rails_basic_ci
 on:
-  push:
-    paths-ignore:
-      - '.github/**/*'
   pull_request:
     types: [opened, synchronize]
   workflow_dispatch:
