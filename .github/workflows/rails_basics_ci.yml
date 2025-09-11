@@ -106,7 +106,7 @@ jobs:
             rails/basics/test_reports/
           include-hidden-files: true
           if-no-files-found: ignore
-  test:
+  dummy:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
