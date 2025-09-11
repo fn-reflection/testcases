@@ -3,6 +3,8 @@ on:
   push:
     paths-ignore:
       - '.github/**/*'
+  pull_request:
+    types: [opened, synchronize]
   workflow_dispatch:
 
 concurrency:
@@ -104,3 +106,12 @@ jobs:
             rails/basics/test_reports/
           include-hidden-files: true
           if-no-files-found: ignore
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        group_index: [0,1]
+    steps:
+      - run: |
+          echo hello;
