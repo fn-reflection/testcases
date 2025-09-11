@@ -122,6 +122,6 @@ jobs:
           echo hello branch protection;
 
   use-reusable:
-    uses: ./.github/workflows/reusable/dummy-in-reusable.yml
+    uses: ./.github/workflows/reusable-dummy.yml
     with:
       message: use-reusable
