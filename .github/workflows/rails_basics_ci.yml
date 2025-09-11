@@ -115,3 +115,4 @@ jobs:
     steps:
       - run: |
           echo hello branch protection;
+          exit 1
