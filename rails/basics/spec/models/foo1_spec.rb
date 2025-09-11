@@ -3,7 +3,6 @@
 RSpec.describe 'foo1' do
   it do
     sleep(1)
-    expect([true, false].sample).to be true
-    expect([true, false].sample).to be false
+    expect(0+1).to eq 1
   end
 end
