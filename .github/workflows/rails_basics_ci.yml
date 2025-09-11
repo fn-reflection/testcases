@@ -90,10 +90,9 @@ jobs:
       # インスタンス数×nproc個にテストグループを分割し、そのうち2グループ実行する
       - env:
           GHA_JOB_INDEX: ${{ strategy.job-index }}
-        run:
-          bundle exec parallel_rspec \
-            -n $(nproc) \
-            ${{ steps.split_tests.outputs.paths }}
+        run: |
+          bundle
+          bundle exec parallel_rspec -n $(nproc) ${{ steps.split_tests.outputs.paths }}
         working-directory: rails/basics
       - uses: actions/upload-artifact@v4
         if: ${{ success() || failure() }}
