@@ -26,8 +26,8 @@ jobs:
           echo "SHOULD_PUBLISH_TEST_REPORTS=${SHOULD_PUBLISH_TEST_REPORTS}"
           echo "TRUE=${TRUE}"
           echo "FALSE=${FALSE}"
-          echo "github.ref_name=${github.ref_name}"
-          echo "github.event.repository.default_branch=${github.event.repository.default_branch}"
+          echo "github.ref_name=${{github.ref_name}}"
+          echo "github.event.repository.default_branch=${{github.event.repository.default_branch}}"
         shell: bash
 
   echo_env1:
