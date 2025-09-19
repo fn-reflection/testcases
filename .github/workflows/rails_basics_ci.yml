@@ -31,6 +31,7 @@ jobs:
         shell: bash
 
   echo_env1:
+    if: ${{ env.SHOULD_PUBLISH_TEST_REPORTS == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
