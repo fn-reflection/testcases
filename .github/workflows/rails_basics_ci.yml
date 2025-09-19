@@ -8,12 +8,46 @@ concurrency:
 
 env:
   RAILS_ENV: test
+  SHOULD_PUBLISH_TEST_REPORTS: ${{ github.ref_name == github.event.repository.default_branch }}
+  SHOULD_NOT_PUBLISH_TEST_REPORTS: ${{ github.ref_name != github.event.repository.default_branch }}
+  TRUE: ${{ 1 == 1 }}
+  FALSE: ${{ 1 == 0 }}
 
 defaults:
   run:
     shell: bash
 
 jobs:
+  echo_env:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - run: |
+          echo "SHOULD_PUBLISH_TEST_REPORTS=${SHOULD_PUBLISH_TEST_REPORTS}"
+          echo "TRUE=${TRUE}"
+          echo "FALSE=${FALSE}"
+          echo "github.ref_name=${github.ref_name}"
+          echo "github.event.repository.default_branch=${github.event.repository.default_branch}"
+        shell: bash
+
+  echo_env1:
+    if: ${{ env.SHOULD_PUBLISH_TEST_REPORTS }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - run: |
+          echo echo_env1
+        shell: bash
+
+  echo_env2:
+    if: ${{ env.SHOULD_NOT_PUBLISH_TEST_REPORTS }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - run: |
+          echo echo_env2
+        shell: bash
+
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -46,17 +80,17 @@ jobs:
         with:
           reports: ${{ runner.temp }}/default-branch-test-results/**/test_results
           glob: spec/**/*_spec.rb
-          index: ${{ matrix.group_index }}
+          index: ${{ strategy.job-index }}
           total: ${{ strategy.job-total }}
           working-directory: rails/basics
-      - run: echo "$(seq -s, $((${{ matrix.group_index }} * $(nproc))) $((${{ matrix.group_index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')"
+      - run: echo "$(seq -s, $((${{ matrix.group_index }} * $(nproc))) $((${{ strategy.job-index }} * $(nproc) + $(nproc) - 1)) | sed 's/,$//')"
       # インスタンス数×nproc(=2)個にテストグループを分割し、そのうち2グループ実行する
       - run: bundle exec parallel_rspec -n `nproc` ${{ steps.split_tests.outputs.paths }}
         working-directory: rails/basics
       - uses: actions/upload-artifact@v4
         if: ${{ success() || failure() }}
         with:
-          name: test-result-${{ matrix.group_index }}
+          name: test-result-${{ strategy.job-index }}
           path: |
             rails/basics/test_results/
             rails/basics/coverage/.resultset*.json
